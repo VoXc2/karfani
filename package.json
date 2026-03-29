@@ -8,13 +8,17 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "clean": "turbo clean",
+    "test": "turbo test",
+    "test:coverage": "turbo test:coverage",
     "db:migrate": "pnpm --filter @karfani/database migrate:dev",
     "db:seed": "pnpm --filter @karfani/database seed",
     "db:studio": "pnpm --filter @karfani/database studio"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.2",
     "turbo": "^2.5.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.2"
   },
   "packageManager": "pnpm@10.33.0",
   "engines": {
