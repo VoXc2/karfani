@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كرفاني — عرض تقديمي شامل</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sand: #D4A574;
+      --sand-light: #E8CDB0;
+      --olive: #4A5D3A;
+      --olive-dark: #3A4A2E;
+      --olive-light: #6B7F5A;
+      --charcoal: #2D2D2D;
+      --charcoal-light: #4A4A4A;
+      --copper: #C67B3C;
+      --cream: #FAF6F0;
+      --cream-dark: #F0E8DA;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--charcoal);
+      line-height: 1.8;
+    }
+
+    /* Slide base */
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-content {
+      max-width: 1200px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Cover Slide */
+    .slide-cover {
+      background: linear-gradient(135deg, var(--olive), var(--olive-dark), var(--charcoal));
+      color: white;
+      text-align: center;
+    }
+
+    .slide-cover .logo {
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin: 0 auto 40px;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .slide-cover h1 {
+      font-size: 72px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(to left, var(--sand), var(--copper));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-cover .subtitle {
+      font-size: 24px;
+      color: rgba(255,255,255,0.6);
+      max-width: 600px;
+      margin: 0 auto 60px;
+    }
+
+    .cover-stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+    }
+
+    .cover-stats .stat {
+      text-align: center;
+    }
+
+    .cover-stats .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--sand);
+    }
+
+    .cover-stats .stat-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+
+    /* Section Slides */
+    .slide-section {
+      background: white;
+    }
+
+    .slide-dark {
+      background: var(--charcoal);
+      color: white;
+    }
+
+    .slide-olive {
+      background: linear-gradient(135deg, var(--olive), var(--olive-dark));
+      color: white;
+    }
+
+    .slide-cream {
+      background: var(--cream);
+    }
+
+    /* Headers */
+    .section-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .badge-olive { background: rgba(74,93,58,0.1); color: var(--olive); }
+    .badge-copper { background: rgba(198,123,60,0.1); color: var(--copper); }
+    .badge-sand { background: rgba(212,165,116,0.2); color: var(--sand); }
+    .badge-white { background: rgba(255,255,255,0.15); color: white; }
+
+    .section-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .section-subtitle {
+      font-size: 18px;
+      color: var(--charcoal-light);
+      margin-bottom: 48px;
+      max-width: 600px;
+    }
+
+    .slide-dark .section-subtitle,
+    .slide-olive .section-subtitle {
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Grid layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 32px;
+      border: 1px solid var(--cream-dark);
+      transition: all 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    .card-dark {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.1);
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .icon-olive { background: rgba(74,93,58,0.1); }
+    .icon-copper { background: rgba(198,123,60,0.1); }
+    .icon-sand { background: rgba(212,165,116,0.2); }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: var(--charcoal-light);
+      line-height: 1.7;
+    }
+
+    .card-dark p { color: rgba(255,255,255,0.5); }
+
+    /* Feature list */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 16px;
+    }
+
+    .feature-list .check {
+      width: 24px;
+      height: 24px;
+      background: var(--olive);
+      color: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* Phone mockup */
+    .mockup {
+      background: white;
+      border-radius: 32px;
+      padding: 16px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+      border: 3px solid var(--cream-dark);
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .mockup-screen {
+      background: var(--cream);
+      border-radius: 20px;
+      padding: 24px;
+      min-height: 500px;
+    }
+
+    /* Page preview */
+    .page-preview {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid var(--cream-dark);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .page-preview-header {
+      background: var(--cream);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .page-preview-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .page-preview-body {
+      padding: 24px;
+      min-height: 300px;
+    }
+
+    /* Tech stack */
+    .tech-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid var(--cream-dark);
+      background: white;
+      margin: 4px;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-right: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      right: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--cream-dark);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 32px;
+      padding-right: 20px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      right: -32px;
+      top: 8px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--olive);
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px var(--olive);
+    }
+
+    .timeline-item h4 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .timeline-item p {
+      font-size: 14px;
+      color: var(--charcoal-light);
+    }
+
+    /* Numbers */
+    .big-number {
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--olive);
+      line-height: 1;
+    }
+
+    /* Decorative */
+    .deco-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 1;
+    }
+
+    /* Page divider */
+    .divider {
+      height: 4px;
+      background: linear-gradient(to left, var(--olive), var(--copper), var(--sand));
+    }
+
+    /* Table */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .styled-table th {
+      background: var(--cream);
+      padding: 12px 16px;
+      text-align: right;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--charcoal-light);
+      border-bottom: 2px solid var(--cream-dark);
+    }
+
+    .styled-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-olive { background: rgba(74,93,58,0.1); color: var(--olive); }
+    .status-copper { background: rgba(198,123,60,0.1); color: var(--copper); }
+
+    /* Responsive */
+    @media print {
+      .slide { page-break-after: always; }
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .section-title { font-size: 32px; }
+      .slide-cover h1 { font-size: 48px; }
+      .cover-stats { flex-direction: column; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== SLIDE 1: COVER ==================== -->
+<div class="slide slide-cover">
+  <div class="deco-circle" style="width:400px;height:400px;background:rgba(212,165,116,0.1);top:-100px;right:-100px;"></div>
+  <div class="deco-circle" style="width:500px;height:500px;background:rgba(198,123,60,0.08);bottom:-150px;left:-150px;"></div>
+
+  <div class="slide-content">
+    <div class="logo">🏕️</div>
+    <h1>كرفاني</h1>
+    <p class="subtitle">المنصة الأولى المتخصصة لتأجير الكرفانات وتشغيلها وإدارة تجربة السفر البري في المملكة العربية السعودية</p>
+
+    <div class="cover-stats">
+      <div class="stat">
+        <div class="stat-value">4</div>
+        <div class="stat-label">تطبيقات</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">17</div>
+        <div class="stat-label">خدمة خلفية</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">30+</div>
+        <div class="stat-label">جدول بيانات</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">13</div>
+        <div class="stat-label">منطقة مغطاة</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 2: THE OPPORTUNITY ==================== -->
+<div class="slide slide-section">
+  <div class="slide-content">
+    <span class="section-badge badge-olive">الفرصة</span>
+    <h2 class="section-title">لماذا كرفاني؟ ولماذا الآن؟</h2>
+    <p class="section-subtitle">السياحة المحلية في أقوى نمو — والسوق ما فيه متخصص</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon icon-olive">📈</div>
+        <h3>115.9 مليون سائح</h3>
+        <p>عدد السياح في السعودية 2024 — نمو 12% سنوياً مع دعم رؤية 2030 للسياحة الطبيعية والمغامرات</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-copper">🏕️</div>
+        <h3>سوق مبعثر</h3>
+        <p>لا يوجد منصة سعودية متخصصة تجمع بين تأجير الكرفانات + تشغيلها + تجربة الرحلة + إدارة الملاك</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-sand">🌍</div>
+        <h3>نموذج مثبت عالمياً</h3>
+        <p>Outdoorsy ($9.5B bookings)، RVshare (acquired)، Camplify (ASX listed) — كلها vertical platforms ناجحة</p>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;">
+      <h3 style="font-size:20px;margin-bottom:20px;">المنافسون المحليون:</h3>
+      <div class="grid-3">
+        <div style="padding:20px;background:var(--cream);border-radius:16px;">
+          <p style="font-weight:700;margin-bottom:4px;">Gather Inn</p>
+          <p style="font-size:13px;color:var(--charcoal-light);">أقرب منافس — لكن marketplace عام وليس vertical متخصص</p>
+        </div>
+        <div style="padding:20px;background:var(--cream);border-radius:16px;">
+          <p style="font-weight:700;margin-bottom:4px;">Darent (ضارنت)</p>
+          <p style="font-size:13px;color:var(--charcoal-light);">تأجير سيارات — ليس مخصص للكرفانات ولا outdoor</p>
+        </div>
+        <div style="padding:20px;background:var(--cream);border-radius:16px;">
+          <p style="font-weight:700;margin-bottom:4px;">كرفاني (نحن)</p>
+          <p style="font-size:13px;color:var(--olive);font-weight:600;">✅ Vertical متخصص + تشغيل + تجربة + إدارة ملاك</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 3: PLATFORM OVERVIEW ==================== -->
+<div class="slide slide-olive">
+  <div class="deco-circle" style="width:300px;height:300px;background:rgba(212,165,116,0.1);top:50px;left:50px;"></div>
+
+  <div class="slide-content" style="text-align:center;">
+    <span class="section-badge badge-white">نظرة عامة</span>
+    <h2 class="section-title" style="color:white;">4 تطبيقات — منصة واحدة</h2>
+    <p class="section-subtitle" style="margin:0 auto 48px;">كل جانب من جوانب العمل مغطى بتطبيق متخصص</p>
+
+    <div class="grid-4">
+      <div class="card card-dark" style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🌐</div>
+        <h3 style="color:white;">موقع العميل</h3>
+        <p>Next.js 15 — RTL — بحث وحجز وتصفح الكرفانات</p>
+        <div style="margin-top:12px;font-size:12px;color:var(--sand);">localhost:3000</div>
+      </div>
+      <div class="card card-dark" style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">📱</div>
+        <h3 style="color:white;">تطبيق الموبايل</h3>
+        <p>React Native + Expo — عميل + مالك</p>
+        <div style="margin-top:12px;font-size:12px;color:var(--sand);">Phase 2</div>
+      </div>
+      <div class="card card-dark" style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">⚙️</div>
+        <h3 style="color:white;">لوحة الأدمن</h3>
+        <p>Next.js 15 — Recharts — TanStack Table</p>
+        <div style="margin-top:12px;font-size:12px;color:var(--sand);">localhost:3001</div>
+      </div>
+      <div class="card card-dark" style="text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;">🔧</div>
+        <h3 style="color:white;">API Backend</h3>
+        <p>NestJS 11 — 17 module — Prisma + PostgreSQL</p>
+        <div style="margin-top:12px;font-size:12px;color:var(--sand);">localhost:4000</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 4: WEB — HOME PAGE ==================== -->
+<div class="slide slide-section">
+  <div class="slide-content">
+    <span class="section-badge badge-olive">موقع العميل</span>
+    <h2 class="section-title">الصفحة الرئيسية</h2>
+    <p class="section-subtitle">تصميم احترافي عربي أولاً مع أنيميشن وتفاعلية كاملة</p>
+
+    <div class="grid-2">
+      <div>
+        <ul class="feature-list">
+          <li>
+            <span class="check">✓</span>
+            <div>
+              <strong>Navbar تفاعلي</strong>
+              <p style="font-size:13px;color:var(--charcoal-light);">شفاف في الأعلى → أبيض مع ظل عند التمرير. قائمة جوال متحركة. تبديل عربي/إنجليزي.</p>
+            </div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div>
+              <strong>Hero Section مع أنيميشن</strong>
+              <p style="font-size:13px;color:var(--charcoal-light);">خلفيات متغيرة كل 5 ثواني. كروت عائمة. إحصائيات (500+ كرفان، 10K+ رحلة). Badge "المنصة الأولى".</p>
+            </div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div>
+              <strong>شريط بحث ذكي</strong>
+              <p style="font-size:13px;color:var(--charcoal-light);">بحث بالموقع + تاريخ بداية + تاريخ نهاية. تأثير تكبير عند التركيز. زر بحث gradient.</p>
+            </div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div>
+              <strong>7 أقسام كاملة</strong>
+              <p style="font-size:13px;color:var(--charcoal-light);">Hero → كرفانات مميزة (6 كروت) → وجهات (4 مدن) → كيف يعمل (3 خطوات) → لماذا كرفاني (6 مميزات) → آراء العملاء (كاروسل) → CTA</p>
+            </div>
+          </li>
+          <li>
+            <span class="check">✓</span>
+            <div>
+              <strong>Scroll Animations</strong>
+              <p style="font-size:13px;color:var(--charcoal-light);">كل قسم يظهر بأنيميشن عند التمرير إليه. تأثير stagger للكروت.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="page-preview">
+        <div class="page-preview-header">
+          <div class="page-preview-dot" style="background:#FF5F57;"></div>
+          <div class="page-preview-dot" style="background:#FFBD2E;"></div>
+          <div class="page-preview-dot" style="background:#28CA42;"></div>
+          <span style="font-size:12px;color:var(--charcoal-light);margin-right:12px;">localhost:3000/ar</span>
+        </div>
+        <div class="page-preview-body" style="background:linear-gradient(135deg,var(--sand-light),rgba(74,93,58,0.1));text-align:center;padding:40px;">
+          <div style="display:inline-block;padding:4px 12px;background:rgba(74,93,58,0.1);border-radius:50px;font-size:11px;color:var(--olive);margin-bottom:16px;">المنصة الأولى لتأجير الكرفانات في السعودية</div>
+          <h3 style="font-size:28px;font-weight:700;margin-bottom:8px;">Road Trips, Reimagined</h3>
+          <p style="font-size:20px;font-weight:700;color:var(--olive);margin-bottom:16px;">مع كرفاني</p>
+          <div style="display:flex;justify-content:center;gap:24px;margin-bottom:24px;">
+            <div><strong style="color:var(--olive);">500+</strong><br><span style="font-size:10px;">كرفان</span></div>
+            <div><strong style="color:var(--olive);">10K+</strong><br><span style="font-size:10px;">رحلة</span></div>
+            <div><strong style="color:var(--olive);">4.9</strong><br><span style="font-size:10px;">تقييم</span></div>
+            <div><strong style="color:var(--olive);">13</strong><br><span style="font-size:10px;">منطقة</span></div>
+          </div>
+          <div style="background:white;border-radius:16px;padding:16px;display:flex;gap:8px;align-items:center;justify-content:center;">
+            <span style="font-size:12px;color:var(--charcoal-light);">📍 أين تريد أن تذهب؟</span>
+            <span style="font-size:12px;color:var(--charcoal-light);">📅 تاريخ البداية</span>
+            <span style="font-size:12px;color:var(--charcoal-light);">📅 تاريخ النهاية</span>
+            <span style="background:var(--copper);color:white;padding:6px 16px;border-radius:10px;font-size:12px;">🔍 ابحث</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 5: WEB — CARAVANS BROWSE ==================== -->
+<div class="slide slide-cream">
+  <div class="slide-content">
+    <span class="section-badge badge-copper">موقع العميل</span>
+    <h2 class="section-title">تصفح الكرفانات</h2>
+    <p class="section-subtitle">صفحة بحث متقدمة مع فلاتر وترتيب تفاعلي</p>
+
+    <div class="grid-2">
+      <div class="page-preview">
+        <div class="page-preview-header">
+          <div class="page-preview-dot" style="background:#FF5F57;"></div>
+          <div class="page-preview-dot" style="background:#FFBD2E;"></div>
+          <div class="page-preview-dot" style="background:#28CA42;"></div>
+          <span style="font-size:12px;color:var(--charcoal-light);margin-right:12px;">localhost:3000/ar/caravans</span>
+        </div>
+        <div class="page-preview-body" style="padding:20px;">
+          <h4 style="font-size:18px;margin-bottom:12px;">استكشف الكرفانات</h4>
+          <!-- Search bar mockup -->
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+            <span style="flex:1;padding:8px 12px;border:1px solid var(--cream-dark);border-radius:10px;font-size:11px;color:var(--charcoal-light);">🔍 ابحث عن كرفان...</span>
+            <span style="padding:8px 12px;border:1px solid var(--cream-dark);border-radius:10px;font-size:11px;">📍 جميع المواقع</span>
+            <span style="padding:8px 12px;border:1px solid var(--cream-dark);border-radius:10px;font-size:11px;">🚐 جميع الأنواع</span>
+          </div>
+          <!-- Cards mockup -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div style="background:var(--cream);border-radius:12px;overflow:hidden;">
+              <div style="height:80px;background:linear-gradient(135deg,var(--sand-light),rgba(74,93,58,0.2));display:flex;align-items:center;justify-content:center;font-size:32px;">🏕️</div>
+              <div style="padding:10px;">
+                <div style="font-size:11px;color:var(--olive);">كرفان متنقل • ⭐ 4.8</div>
+                <div style="font-size:13px;font-weight:700;margin:4px 0;">كرفان عائلي فاخر</div>
+                <div style="font-size:12px;font-weight:700;color:var(--olive);">1,200 <span style="font-size:10px;color:var(--charcoal-light);">ر.س/ليلة</span></div>
+              </div>
+            </div>
+            <div style="background:var(--cream);border-radius:12px;overflow:hidden;">
+              <div style="height:80px;background:linear-gradient(135deg,var(--sand-light),rgba(198,123,60,0.2));display:flex;align-items:center;justify-content:center;font-size:32px;">🚐</div>
+              <div style="padding:10px;">
+                <div style="font-size:11px;color:var(--olive);">فان مجهز • ⭐ 4.9</div>
+                <div style="font-size:13px;font-weight:700;margin:4px 0;">فان مغامرات الصحراء</div>
+                <div style="font-size:12px;font-weight:700;color:var(--olive);">700 <span style="font-size:10px;color:var(--charcoal-light);">ر.س/ليلة</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <ul class="feature-list">
+          <li><span class="check">✓</span><div><strong>بحث نصي فوري</strong><p style="font-size:13px;color:var(--charcoal-light);">بحث بالاسم أو الموقع مع تحديث فوري للنتائج</p></div></li>
+          <li><span class="check">✓</span><div><strong>فلاتر متعددة</strong><p style="font-size:13px;color:var(--charcoal-light);">فلتر بالموقع (9 مدن) + النوع (4 أنواع) + الترتيب (سعر، تقييم)</p></div></li>
+          <li><span class="check">✓</span><div><strong>شريط فلاتر لاصق</strong><p style="font-size:13px;color:var(--charcoal-light);">يبقى ظاهر عند التمرير مع عرض الفلاتر النشطة</p></div></li>
+          <li><span class="check">✓</span><div><strong>9 كرفانات تجريبية</strong><p style="font-size:13px;color:var(--charcoal-light);">بيانات واقعية: صور، أسعار، تقييمات، تجهيزات، مواقع</p></div></li>
+          <li><span class="check">✓</span><div><strong>كروت تفاعلية</strong><p style="font-size:13px;color:var(--charcoal-light);">زر قلب (إعجاب)، hover effects، أيقونات التجهيزات (WiFi, تكييف, كهرباء)</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 6: WEB — CARAVAN DETAIL ==================== -->
+<div class="slide slide-section">
+  <div class="slide-content">
+    <span class="section-badge badge-olive">موقع العميل</span>
+    <h2 class="section-title">صفحة تفاصيل الكرفان</h2>
+    <p class="section-subtitle">صفحة كاملة مع معرض صور وحاسبة حجز تفاعلية</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon icon-olive">🖼️</div>
+        <h3>معرض صور تفاعلي</h3>
+        <p>5 صور مع أسهم تنقل. عرض شبكي على الديسكتوب. مؤشرات نقطية على الجوال. أزرار مشاركة وإعجاب.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-copper">💰</div>
+        <h3>حاسبة الحجز</h3>
+        <p>اختيار تاريخ البداية والنهاية + عدد الأشخاص. حساب تلقائي: سعر × ليالي + رسوم خدمة + VAT 15% = الإجمالي.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-sand">⭐</div>
+        <h3>التقييمات والمراجعات</h3>
+        <p>عرض آراء العملاء مع النجوم والأسماء والتواريخ. متوسط التقييم العام. صفحة التفاصيل كاملة RTL.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-olive">📋</div>
+        <h3>التجهيزات والمرافق</h3>
+        <p>8 تجهيزات مع أيقونات: واي فاي، تكييف، تدفئة، طاقة شمسية، مطبخ، حمام، شاشة، توصيل.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-copper">👤</div>
+        <h3>ملف المالك</h3>
+        <p>اسم المالك، تاريخ الانضمام، معدل الرد. زر "تواصل" مباشر.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-sand">🛡️</div>
+        <h3>سياسة الإلغاء</h3>
+        <p>عرض واضح: إلغاء مجاني قبل 48 ساعة، 50% قبل 24 ساعة، لا استرداد بعد ذلك. قواعد الاستخدام.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 7: AUTH / LOGIN ==================== -->
+<div class="slide slide-dark">
+  <div class="deco-circle" style="width:400px;height:400px;background:rgba(74,93,58,0.1);top:-50px;right:-100px;"></div>
+
+  <div class="slide-content">
+    <div class="grid-2">
+      <div>
+        <span class="section-badge badge-white">المصادقة</span>
+        <h2 class="section-title" style="color:white;">تسجيل دخول بـ OTP</h2>
+        <p class="section-subtitle">تجربة تسجيل دخول سهلة وآمنة بالمعيار السعودي</p>
+
+        <ul class="feature-list" style="color:white;">
+          <li><span class="check">✓</span><div><strong>إدخال رقم الجوال</strong><p style="font-size:13px;color:rgba(255,255,255,0.5);">رمز الدولة +966 ثابت. تحقق فوري من صيغة الرقم.</p></div></li>
+          <li><span class="check">✓</span><div><strong>رمز تحقق 6 خانات</strong><p style="font-size:13px;color:rgba(255,255,255,0.5);">OTP تفاعلي — تنقل تلقائي بين الخانات. رجوع بـ Backspace. حالة تحميل.</p></div></li>
+          <li><span class="check">✓</span><div><strong>تصميم Split Screen</strong><p style="font-size:13px;color:rgba(255,255,255,0.5);">نصف الشاشة بصري (gradient + إحصائيات) + نصف نموذج الدخول.</p></div></li>
+          <li><span class="check">✓</span><div><strong>أمان PDPL</strong><p style="font-size:13px;color:rgba(255,255,255,0.5);">شارات أمان (حماية PDPL + اتصال مشفر). إعادة إرسال الرمز.</p></div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="mockup">
+          <div class="mockup-screen" style="text-align:center;">
+            <div style="margin-bottom:24px;">
+              <div style="width:48px;height:48px;background:var(--olive);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:white;font-size:20px;">🏕️</div>
+              <h4 style="font-size:20px;">تسجيل الدخول</h4>
+              <p style="font-size:12px;color:var(--charcoal-light);margin-top:4px;">أدخل رقم جوالك وراح نرسلك رمز تحقق</p>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+              <span style="padding:10px;border:1px solid var(--cream-dark);border-radius:10px;font-size:12px;">🇸🇦 +966</span>
+              <span style="flex:1;padding:10px;border:1px solid var(--cream-dark);border-radius:10px;font-size:12px;text-align:left;color:var(--charcoal-light);">5XXXXXXXX</span>
+            </div>
+            <div style="padding:12px;background:var(--olive);color:white;border-radius:12px;font-weight:600;font-size:14px;">إرسال رمز التحقق</div>
+            <div style="display:flex;justify-content:center;gap:16px;margin-top:24px;font-size:11px;color:var(--charcoal-light);">
+              <span>🛡️ حماية PDPL</span>
+              <span>🔒 اتصال مشفر</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 8: ADMIN DASHBOARD ==================== -->
+<div class="slide slide-section">
+  <div class="slide-content">
+    <span class="section-badge badge-olive">لوحة الأدمن</span>
+    <h2 class="section-title">لوحة التحكم الرئيسية</h2>
+    <p class="section-subtitle">نظرة شاملة على أداء المنصة مع رسوم بيانية حية</p>
+
+    <div class="grid-2">
+      <div>
+        <h3 style="font-size:20px;margin-bottom:20px;">المكونات:</h3>
+        <ul class="feature-list">
+          <li><span class="check">✓</span><div><strong>Sidebar قابل للطي</strong><p style="font-size:13px;color:var(--charcoal-light);">10 أقسام مع badges للإشعارات (12 حجز، 3 صيانة، 5 دعم). قابل للتصغير.</p></div></li>
+          <li><span class="check">✓</span><div><strong>4 بطاقات KPI</strong><p style="font-size:13px;color:var(--charcoal-light);">إجمالي الحجوزات (247) • الكرفانات النشطة (48) • الإيرادات (345K ر.س) • معدل الإشغال (72%)</p></div></li>
+          <li><span class="check">✓</span><div><strong>3 رسوم بيانية Recharts</strong><p style="font-size:13px;color:var(--charcoal-light);">Area Chart (إيرادات شهرية) • Pie Chart (حالات الحجز) • Bar Chart (حجوزات أسبوعية)</p></div></li>
+          <li><span class="check">✓</span><div><strong>جدول أحدث الحجوزات</strong><p style="font-size:13px;color:var(--charcoal-light);">آخر 5 حجوزات مع الحالة واللون والمبلغ.</p></div></li>
+          <li><span class="check">✓</span><div><strong>إشعارات وملف شخصي</strong><p style="font-size:13px;color:var(--charcoal-light);">قائمة إشعارات منسدلة (4 إشعارات). ملف المدير مع dropdown.</p></div></li>
+        </ul>
+      </div>
+      <div>
+        <!-- KPI mockup -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:white;padding:16px;border-radius:14px;border:1px solid var(--cream-dark);">
+            <div style="font-size:24px;font-weight:700;">247</div>
+            <div style="font-size:12px;color:var(--charcoal-light);">إجمالي الحجوزات</div>
+            <div style="font-size:11px;color:green;margin-top:4px;">↑ +12%</div>
+          </div>
+          <div style="background:white;padding:16px;border-radius:14px;border:1px solid var(--cream-dark);">
+            <div style="font-size:24px;font-weight:700;">345,000</div>
+            <div style="font-size:12px;color:var(--charcoal-light);">الإيرادات (ر.س)</div>
+            <div style="font-size:11px;color:green;margin-top:4px;">↑ +18%</div>
+          </div>
+          <div style="background:white;padding:16px;border-radius:14px;border:1px solid var(--cream-dark);">
+            <div style="font-size:24px;font-weight:700;">48</div>
+            <div style="font-size:12px;color:var(--charcoal-light);">الكرفانات النشطة</div>
+            <div style="font-size:11px;color:green;margin-top:4px;">↑ +3</div>
+          </div>
+          <div style="background:white;padding:16px;border-radius:14px;border:1px solid var(--cream-dark);">
+            <div style="font-size:24px;font-weight:700;">72%</div>
+            <div style="font-size:12px;color:var(--charcoal-light);">معدل الإشغال</div>
+            <div style="font-size:11px;color:red;margin-top:4px;">↓ -3%</div>
+          </div>
+        </div>
+        <!-- Chart mockup -->
+        <div style="background:white;padding:20px;border-radius:14px;border:1px solid var(--cream-dark);">
+          <h4 style="font-size:14px;margin-bottom:12px;">الإيرادات والحجوزات</h4>
+          <svg viewBox="0 0 300 120" style="width:100%;">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A5D3A" stop-opacity="0.3"/><stop offset="100%" stop-color="#4A5D3A" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,100 L50,85 L100,70 L150,50 L200,35 L250,25 L300,10 L300,120 L0,120Z" fill="url(#g1)"/>
+            <path d="M0,100 L50,85 L100,70 L150,50 L200,35 L250,25 L300,10" fill="none" stroke="#4A5D3A" stroke-width="2.5"/>
+            <circle cx="0" cy="100" r="3" fill="#4A5D3A"/><circle cx="50" cy="85" r="3" fill="#4A5D3A"/><circle cx="100" cy="70" r="3" fill="#4A5D3A"/><circle cx="150" cy="50" r="3" fill="#4A5D3A"/><circle cx="200" cy="35" r="3" fill="#4A5D3A"/><circle cx="250" cy="25" r="3" fill="#4A5D3A"/><circle cx="300" cy="10" r="3" fill="#4A5D3A"/>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--charcoal-light);margin-top:4px;">
+            <span>يناير</span><span>فبراير</span><span>مارس</span><span>أبريل</span><span>مايو</span><span>يونيو</span><span>يوليو</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 9: ADMIN PAGES ==================== -->
+<div class="slide slide-cream">
+  <div class="slide-content">
+    <span class="section-badge badge-copper">لوحة الأدمن</span>
+    <h2 class="section-title">صفحات الإدارة</h2>
+    <p class="section-subtitle">3 صفحات إدارية متقدمة بجانب لوحة التحكم الرئيسية</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-icon icon-olive">📋</div>
+        <h3>إدارة الحجوزات</h3>
+        <p style="margin-bottom:16px;">صفحة كاملة لإدارة جميع الحجوزات:</p>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>• تبويبات حسب الحالة (الكل، مؤكدة، بانتظار الدفع، نشطة، مكتملة، ملغاة)</li>
+          <li>• جدول تفاعلي مع بحث فوري</li>
+          <li>• عرض رقم الحجز، العميل، الكرفان، التاريخ، الحالة، المبلغ</li>
+          <li>• أزرار عرض وتعديل لكل حجز</li>
+          <li>• تصدير البيانات + pagination</li>
+          <li>• 4 بطاقات ملخص (إجمالي اليوم، بانتظار، نشطة، إيرادات)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-copper">🚐</div>
+        <h3>إدارة الكرفانات</h3>
+        <p style="margin-bottom:16px;">عرض وإدارة أسطول الكرفانات:</p>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>• عرض بطاقات مع صور وحالة كل كرفان</li>
+          <li>• فلتر بالحالة (نشط، صيانة، بانتظار الموافقة)</li>
+          <li>• إحصائيات: السعر، عدد الحجوزات، الإيرادات لكل كرفان</li>
+          <li>• معلومات المالك والموقع والتقييم</li>
+          <li>• أزرار عرض وتعديل</li>
+          <li>• زر "إضافة كرفان" جديد</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-sand">📊</div>
+        <h3>التحليلات والتقارير</h3>
+        <p style="margin-bottom:16px;">رسوم بيانية وتقارير شاملة:</p>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>• إيرادات vs مصروفات (Area Chart مزدوج)</li>
+          <li>• توزيع أنواع الكرفانات (Pie Chart)</li>
+          <li>• أداء المناطق (Bar Chart أفقي)</li>
+          <li>• معدل الإشغال أسبوعياً (Line Chart)</li>
+          <li>• جدول أفضل الكرفانات أداءً</li>
+          <li>• 4 KPIs: إجمالي الإيرادات، الحجوزات، المستخدمين، التقييم</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 10: BACKEND / API ==================== -->
+<div class="slide slide-dark">
+  <div class="deco-circle" style="width:400px;height:400px;background:rgba(74,93,58,0.08);bottom:-100px;left:-100px;"></div>
+
+  <div class="slide-content">
+    <span class="section-badge badge-white">الخلفية</span>
+    <h2 class="section-title" style="color:white;">17 خدمة NestJS</h2>
+    <p class="section-subtitle">Modular Monolith — كل خدمة في module مستقل</p>
+
+    <div class="grid-4" style="margin-bottom:32px;">
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🔐</div>
+        <h3 style="color:white;font-size:14px;">Auth</h3>
+        <p style="font-size:11px;">OTP + JWT + RBAC</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🚐</div>
+        <h3 style="color:white;font-size:14px;">Inventory</h3>
+        <p style="font-size:11px;">CRUD + بحث + S3</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">📅</div>
+        <h3 style="color:white;font-size:14px;">Availability</h3>
+        <p style="font-size:11px;">Calendar Slots</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">💵</div>
+        <h3 style="color:white;font-size:14px;">Pricing</h3>
+        <p style="font-size:11px;">Priority Rules Engine</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">📋</div>
+        <h3 style="color:white;font-size:14px;">Booking</h3>
+        <p style="font-size:11px;">12-State Machine</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">💳</div>
+        <h3 style="color:white;font-size:14px;">Payments</h3>
+        <p style="font-size:11px;">Moyasar + mada</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">📄</div>
+        <h3 style="color:white;font-size:14px;">Contracts</h3>
+        <p style="font-size:11px;">PDF + E-Sign</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🔍</div>
+        <h3 style="color:white;font-size:14px;">Inspection</h3>
+        <p style="font-size:11px;">Pre/Post + صور</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">⚠️</div>
+        <h3 style="color:white;font-size:14px;">Damage</h3>
+        <p style="font-size:11px;">تقارير + خصم</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🔧</div>
+        <h3 style="color:white;font-size:14px;">Maintenance</h3>
+        <p style="font-size:11px;">جدولة + متابعة</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🚚</div>
+        <h3 style="color:white;font-size:14px;">Dispatch</h3>
+        <p style="font-size:11px;">تسليم + استلام</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🎧</div>
+        <h3 style="color:white;font-size:14px;">Support</h3>
+        <p style="font-size:11px;">تذاكر + رسائل</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🗺️</div>
+        <h3 style="color:white;font-size:14px;">Content</h3>
+        <p style="font-size:11px;">مسارات + وجهات</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">📊</div>
+        <h3 style="color:white;font-size:14px;">Analytics</h3>
+        <p style="font-size:11px;">KPIs + تقارير</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">⚙️</div>
+        <h3 style="color:white;font-size:14px;">Admin</h3>
+        <p style="font-size:11px;">موافقات + إدارة</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">🔔</div>
+        <h3 style="color:white;font-size:14px;">Notifications</h3>
+        <p style="font-size:11px;">SMS + WhatsApp + Push</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;margin-bottom:8px;">📤</div>
+        <h3 style="color:white;font-size:14px;">Upload</h3>
+        <p style="font-size:11px;">S3 Presigned URLs</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 11: DATABASE ==================== -->
+<div class="slide slide-section">
+  <div class="slide-content">
+    <span class="section-badge badge-olive">قاعدة البيانات</span>
+    <h2 class="section-title">30 جدول + PostGIS</h2>
+    <p class="section-subtitle">Prisma ORM مع PostgreSQL 16 — مخطط بيانات شامل</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3 style="color:var(--olive);margin-bottom:12px;">المستخدمين والمصادقة</h3>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:4px;">
+          <li>• <code>users</code> — الهاتف، الهوية، الأدوار</li>
+          <li>• <code>driving_licenses</code> — صور، تحقق، انتهاء</li>
+          <li>• <code>owner_profiles</code> — بيانات الشركة، IBAN</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--olive);margin-bottom:12px;">المخزون والموقع</h3>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:4px;">
+          <li>• <code>caravans</code> — نوع، طراز، PostGIS</li>
+          <li>• <code>caravan_media</code> — صور، فيديو، 360</li>
+          <li>• <code>locations</code> — مدن، مخيمات، إحداثيات</li>
+          <li>• <code>routes</code> — waypoints، صعوبة</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--olive);margin-bottom:12px;">الحجوزات والدفع</h3>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:4px;">
+          <li>• <code>bookings</code> — 12 حالة state machine</li>
+          <li>• <code>payments</code> — Moyasar refs</li>
+          <li>• <code>payouts</code> — دفعات الملاك</li>
+          <li>• <code>contracts</code> — PDF + توقيع</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--olive);margin-bottom:12px;">التشغيل</h3>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:4px;">
+          <li>• <code>inspections</code> — فحص قبل/بعد</li>
+          <li>• <code>damage_reports</code> — أضرار + خصم</li>
+          <li>• <code>maintenance_jobs</code> — صيانة + جدولة</li>
+          <li>• <code>support_tickets</code> — تذاكر + رسائل</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--olive);margin-bottom:12px;">التسعير والتوفر</h3>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:4px;">
+          <li>• <code>availability_slots</code> — يومي لكل كرفان</li>
+          <li>• <code>pricing_rules</code> — أولوية: حدث > موسم > ويكند > أساسي</li>
+          <li>• <code>promo_codes</code> — نسبة/ثابت</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--olive);margin-bottom:12px;">التقييم والامتثال</h3>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:4px;">
+          <li>• <code>reviews</code> — 1-5 نجوم + صور</li>
+          <li>• <code>permits</code> — تصاريح نقل/سياحة</li>
+          <li>• <code>compliance_flags</code> — تحذيرات</li>
+          <li>• <code>notifications</code> — متعدد القنوات</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 12: TECH STACK ==================== -->
+<div class="slide slide-olive">
+  <div class="slide-content" style="text-align:center;">
+    <span class="section-badge badge-white">التقنيات</span>
+    <h2 class="section-title" style="color:white;">Tech Stack</h2>
+    <p class="section-subtitle" style="margin:0 auto 40px;">أحدث التقنيات مع أداء عالي</p>
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:800px;margin:0 auto;">
+      <span class="tech-tag">⚡ Next.js 15</span>
+      <span class="tech-tag">⚛️ React 19</span>
+      <span class="tech-tag">🏗️ NestJS 11</span>
+      <span class="tech-tag">🗄️ PostgreSQL 16</span>
+      <span class="tech-tag">🌍 PostGIS</span>
+      <span class="tech-tag">🔷 Prisma ORM</span>
+      <span class="tech-tag">🚀 Redis 7</span>
+      <span class="tech-tag">🎨 Tailwind CSS 4</span>
+      <span class="tech-tag">📊 Recharts</span>
+      <span class="tech-tag">📱 React Native</span>
+      <span class="tech-tag">🏭 Turborepo</span>
+      <span class="tech-tag">📦 pnpm</span>
+      <span class="tech-tag">🐳 Docker</span>
+      <span class="tech-tag">☁️ AWS me-south-1</span>
+      <span class="tech-tag">💳 Moyasar</span>
+      <span class="tech-tag">📲 Unifonic</span>
+      <span class="tech-tag">🗺️ Google Maps</span>
+      <span class="tech-tag">📄 TypeScript</span>
+      <span class="tech-tag">✅ Zod Validation</span>
+      <span class="tech-tag">🔒 JWT + RBAC</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 13: SAUDI COMPLIANCE ==================== -->
+<div class="slide slide-section">
+  <div class="slide-content">
+    <span class="section-badge badge-copper">الامتثال السعودي</span>
+    <h2 class="section-title">متوافق مع الأنظمة السعودية</h2>
+    <p class="section-subtitle">PDPL، هيئة النقل، وزارة السياحة، ZATCA</p>
+
+    <div class="grid-2" style="gap:24px;">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="font-size:32px;">🛡️</div>
+          <div><h3>PDPL — حماية البيانات الشخصية</h3></div>
+        </div>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>✅ موافقة صريحة عند التسجيل</li>
+          <li>✅ البيانات في السعودية (AWS me-south-1 البحرين)</li>
+          <li>✅ تشفير PII بـ AES-256</li>
+          <li>✅ حق الوصول والحذف</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="font-size:32px;">🚛</div>
+          <div><h3>هيئة النقل</h3></div>
+        </div>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>✅ تحقق من تسجيل الكرفان</li>
+          <li>✅ تصاريح التأجير التجاري</li>
+          <li>✅ عقود إلكترونية</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="font-size:32px;">🏨</div>
+          <div><h3>وزارة السياحة</h3></div>
+        </div>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>✅ رخصة مشغل سياحي</li>
+          <li>✅ معايير تصنيف المخيمات</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <div style="font-size:32px;">🧾</div>
+          <div><h3>ZATCA — الزكاة والضريبة</h3></div>
+        </div>
+        <ul style="list-style:none;font-size:13px;color:var(--charcoal-light);display:flex;flex-direction:column;gap:6px;">
+          <li>✅ VAT 15% على كل حجز</li>
+          <li>✅ فوترة إلكترونية (FATOORA) — Phase 4</li>
+          <li>✅ PCI DSS عبر Moyasar (بدون بيانات بطاقة)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 14: REVENUE MODEL ==================== -->
+<div class="slide slide-cream">
+  <div class="slide-content">
+    <span class="section-badge badge-olive">نموذج الإيرادات</span>
+    <h2 class="section-title">9 مصادر دخل</h2>
+    <p class="section-subtitle">نموذج إيرادات متنوع ومستدام</p>
+
+    <div class="grid-3">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">💰</div>
+        <h3>عمولة الحجز</h3>
+        <p>نسبة من كل حجز يتم عبر المنصة</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🏷️</div>
+        <h3>رسوم الخدمة</h3>
+        <p>رسوم على المستأجر لتغطية التشغيل</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🚚</div>
+        <h3>التوصيل والتجهيز</h3>
+        <p>توصيل الكرفان لموقع المخيم</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🧹</div>
+        <h3>التنظيف والاسترجاع</h3>
+        <p>رسوم تنظيف بعد كل رحلة</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🛡️</div>
+        <h3>الحماية والتأمين</h3>
+        <p>باقات حماية اختيارية للمستأجر</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🔌</div>
+        <h3>الإضافات</h3>
+        <p>مولد، ثلاجة، شواء، GPS، Wi-Fi</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🏔️</div>
+        <h3>باقات التجارب</h3>
+        <p>رحلات مرشدة، تخييم، مسارات</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">💼</div>
+        <h3>SaaS اشتراك</h3>
+        <p>اشتراكات للملاك وشركات التشغيل</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🏗️</div>
+        <h3>صيانة وتخزين</h3>
+        <p>خدمات صيانة وتخزين الكرفانات</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 15: ROADMAP ==================== -->
+<div class="slide slide-dark">
+  <div class="slide-content">
+    <span class="section-badge badge-white">خارطة الطريق</span>
+    <h2 class="section-title" style="color:white;">4 مراحل — 32 أسبوع</h2>
+
+    <div class="grid-2">
+      <div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4 style="color:var(--sand);">المرحلة 1: MVP (أسابيع 1-10)</h4>
+            <p style="color:rgba(255,255,255,0.5);">أساسيات المنصة + حجز + دفع + موقع العميل + لوحة التحكم الأساسية + تطبيق جوال أولي</p>
+            <div style="margin-top:8px;display:inline-block;padding:4px 12px;background:var(--olive);border-radius:8px;font-size:11px;color:white;font-weight:600;">✅ جاري التنفيذ</div>
+          </div>
+          <div class="timeline-item">
+            <h4 style="color:var(--sand);">المرحلة 2: منصة التجارب (أسابيع 11-16)</h4>
+            <p style="color:rgba(255,255,255,0.5);">مسارات ووجهات، تقييمات، تسعير موسمي، أكواد خصم، سوق الإضافات</p>
+          </div>
+          <div class="timeline-item">
+            <h4 style="color:var(--sand);">المرحلة 3: نظام تشغيل الأسطول (أسابيع 17-24)</h4>
+            <p style="color:rgba(255,255,255,0.5);">لوحة المالك، تطبيق المالك، صيانة، أضرار، توصيل، دفعات تلقائية</p>
+          </div>
+          <div class="timeline-item">
+            <h4 style="color:var(--sand);">المرحلة 4: التوسع و B2B (أسابيع 25-32)</h4>
+            <p style="color:rgba(255,255,255,0.5);">إيجار باتجاه واحد، شبكة مراكز، أدوات B2B، تسعير ديناميكي، ولاء، تأمين</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:white;margin-bottom:20px;">ما تم إنجازه (MVP):</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">الملفات</div>
+            <div style="font-size:24px;font-weight:700;color:var(--sand);">93+</div>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">أسطر الكود</div>
+            <div style="font-size:24px;font-weight:700;color:var(--sand);">15,000+</div>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">API Modules</div>
+            <div style="font-size:24px;font-weight:700;color:var(--sand);">17</div>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Database Models</div>
+            <div style="font-size:24px;font-weight:700;color:var(--sand);">30</div>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Web Pages</div>
+            <div style="font-size:24px;font-weight:700;color:var(--sand);">5</div>
+          </div>
+          <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Admin Pages</div>
+            <div style="font-size:24px;font-weight:700;color:var(--sand);">4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ==================== SLIDE 16: CLOSING ==================== -->
+<div class="slide slide-cover" style="background:linear-gradient(135deg, var(--charcoal), var(--olive-dark), var(--olive));">
+  <div class="slide-content" style="text-align:center;">
+    <div class="logo" style="border:none;">🏕️</div>
+    <h1 style="font-size:64px;">كرفاني</h1>
+    <p class="subtitle" style="font-size:28px;margin-bottom:40px;">المنصة الأولى المتخصصة لتأجير الكرفانات في السعودية</p>
+
+    <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:60px;">
+      <span style="padding:10px 24px;background:rgba(255,255,255,0.1);border-radius:12px;font-size:14px;">🌐 موقع العميل ✅</span>
+      <span style="padding:10px 24px;background:rgba(255,255,255,0.1);border-radius:12px;font-size:14px;">⚙️ لوحة الأدمن ✅</span>
+      <span style="padding:10px 24px;background:rgba(255,255,255,0.1);border-radius:12px;font-size:14px;">🔧 API Backend ✅</span>
+      <span style="padding:10px 24px;background:rgba(255,255,255,0.1);border-radius:12px;font-size:14px;">🗄️ Database ✅</span>
+      <span style="padding:10px 24px;background:rgba(255,255,255,0.1);border-radius:12px;font-size:14px;">📱 تطبيق موبايل 🔜</span>
+    </div>
+
+    <div style="font-size:16px;color:rgba(255,255,255,0.4);">
+      GitHub: github.com/VoXc2/karfani
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
