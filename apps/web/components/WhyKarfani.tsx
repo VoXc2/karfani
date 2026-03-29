@@ -50,7 +50,9 @@ export default function WhyKarfani() {
         <div className={`grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 stagger-children ${visible ? 'visible' : ''}`}>
           {features.map((f, i) => {
             const Icon = f.icon;
-            const data = i < 3 ? { title: t(featureData[i].titleKey), desc: t(featureData[i].descKey) } : extraFeatures[i - 3];
+            const fd = featureData[i];
+            const ef = extraFeatures[i - 3];
+            const data = i < 3 && fd ? { title: t(fd.titleKey), desc: t(fd.descKey) } : ef ?? { title: '', desc: '' };
             return (
               <div
                 key={i}

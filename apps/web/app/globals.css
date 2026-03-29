@@ -130,3 +130,108 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #B8884A;
 }
+
+/* Hide scrollbar for horizontal scroll areas */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Map Marker Styles */
+.karfani-marker {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.karfani-marker:hover {
+  transform: scale(1.15);
+  z-index: 10;
+}
+
+.marker-bubble {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 2px solid white;
+  transition: all 0.2s ease;
+}
+
+.marker-caravan {
+  background: #4A5D3A;
+  color: white;
+}
+
+.marker-campsite {
+  background: #F59E0B;
+  color: white;
+}
+
+.marker-route {
+  background: #C67B3C;
+  color: white;
+}
+
+.marker-hub {
+  background: #2D2D2D;
+  color: white;
+}
+
+.marker-price {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.marker-currency {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.marker-emoji {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.marker-arrow {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #4A5D3A;
+  margin-top: -1px;
+}
+
+.marker-arrow-campsite {
+  border-top-color: #F59E0B;
+}
+
+.marker-arrow-route {
+  border-top-color: #C67B3C;
+}
+
+.marker-arrow-hub {
+  border-top-color: #2D2D2D;
+}
+
+/* Mapbox overrides */
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}
+
+.mapboxgl-canvas {
+  outline: none;
+}

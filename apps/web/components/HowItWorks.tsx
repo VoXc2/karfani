@@ -67,8 +67,8 @@ export default function HowItWorks() {
                     {step.num}
                   </div>
 
-                  <h3 className="text-xl font-bold text-charcoal mb-3">{stepData[i].title}</h3>
-                  <p className="text-charcoal-light leading-relaxed text-sm">{stepData[i].desc}</p>
+                  <h3 className="text-xl font-bold text-charcoal mb-3">{stepData[i]?.title}</h3>
+                  <p className="text-charcoal-light leading-relaxed text-sm">{stepData[i]?.desc}</p>
                 </div>
               </div>
             );

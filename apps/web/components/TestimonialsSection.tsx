@@ -65,22 +65,22 @@ export default function TestimonialsSection() {
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className={`w-5 h-5 ${i < testimonials[active].rating ? 'fill-copper text-copper' : 'text-cream-dark'}`}
+                    className={`w-5 h-5 ${i < (testimonials[active]?.rating ?? 0) ? 'fill-copper text-copper' : 'text-cream-dark'}`}
                   />
                 ))}
               </div>
 
               {/* Text */}
               <p className="text-lg md:text-xl text-charcoal leading-relaxed mb-8 max-w-2xl transition-all duration-500">
-                "{testimonials[active].text}"
+                "{testimonials[active]?.text}"
               </p>
 
               {/* Author */}
               <div className="flex flex-col items-center gap-2">
-                <span className="text-4xl">{testimonials[active].avatar}</span>
+                <span className="text-4xl">{testimonials[active]?.avatar}</span>
                 <div>
-                  <p className="font-bold text-charcoal">{testimonials[active].name}</p>
-                  <p className="text-sm text-charcoal-light">{testimonials[active].location}</p>
+                  <p className="font-bold text-charcoal">{testimonials[active]?.name}</p>
+                  <p className="text-sm text-charcoal-light">{testimonials[active]?.location}</p>
                 </div>
               </div>
             </div>

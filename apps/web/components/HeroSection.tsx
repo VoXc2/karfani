@@ -107,7 +107,7 @@ export default function HeroSection() {
               {/* Main Card */}
               <div className="absolute inset-8 bg-white rounded-3xl shadow-2xl shadow-charcoal/10 overflow-hidden border border-cream-dark">
                 <div className="h-3/5 bg-gradient-to-br from-olive/20 via-sand-light/50 to-copper/20 flex items-center justify-center">
-                  <span className="text-[120px] animate-float">{heroImages[activeSlide].emoji}</span>
+                  <span className="text-[120px] animate-float">{heroImages[activeSlide]?.emoji}</span>
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-2 mb-2">

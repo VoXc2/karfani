@@ -25,6 +25,7 @@
   "nav": {
     "home": "الرئيسية",
     "caravans": "الكرفانات",
+    "explore": "استكشف",
     "routes": "المسارات",
     "experiences": "التجارب",
     "about": "عن كرفاني",
@@ -100,6 +101,20 @@
     "otpPlaceholder": "أدخل الرمز المكون من 6 أرقام",
     "verifyOtp": "تأكيد",
     "otpSent": "تم إرسال رمز التحقق إلى {phone}"
+  },
+  "explore": {
+    "title": "استكشف الخريطة",
+    "searchPlaceholder": "ابحث عن كرفان، مخيم، أو وجهة...",
+    "loading": "جاري تحميل الخريطة...",
+    "resultsOnMap": "نتيجة على الخريطة",
+    "caravan": "كرفان",
+    "campsite": "مخيم",
+    "route": "مسار",
+    "hub": "نقطة استلام",
+    "viewDetails": "عرض التفاصيل",
+    "viewRoute": "عرض المسار",
+    "persons": "أشخاص",
+    "navigate": "الاتجاهات"
   },
   "footer": {
     "description": "منصة سعودية متخصصة لتأجير الكرفانات وتجارب السفر البري",

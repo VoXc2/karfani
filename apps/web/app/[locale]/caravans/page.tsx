@@ -33,7 +33,7 @@ export default function CaravansPage() {
   const [search, setSearch] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('الكل');
   const [selectedType, setSelectedType] = useState('الكل');
-  const [priceRange, setPriceRange] = useState([0, 3000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 3000]);
   const [sortBy, setSortBy] = useState('recommended');
   const [filtersOpen, setFiltersOpen] = useState(false);
 

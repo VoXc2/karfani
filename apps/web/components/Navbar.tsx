@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname } from '../i18n/navigation';
-import { Menu, X, Globe, ChevronDown, Compass, MapPin, Tent, User, Phone } from 'lucide-react';
+import { Menu, X, Globe, ChevronDown, Compass, MapPin, Tent, User, Phone, Map } from 'lucide-react';
 
 export default function Navbar() {
   const t = useTranslations();
@@ -20,6 +20,7 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/caravans' as const, label: t('nav.caravans'), icon: Compass },
+    { href: '/explore' as const, label: t('nav.explore'), icon: Map },
     { href: '/routes' as const, label: t('nav.routes'), icon: MapPin },
     { href: '/experiences' as const, label: t('nav.experiences'), icon: Tent },
   ];

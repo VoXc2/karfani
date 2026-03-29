@@ -25,6 +25,7 @@
   "nav": {
     "home": "Home",
     "caravans": "Caravans",
+    "explore": "Explore",
     "routes": "Routes",
     "experiences": "Experiences",
     "about": "About Karfani",
@@ -100,6 +101,20 @@
     "otpPlaceholder": "Enter 6-digit code",
     "verifyOtp": "Verify",
     "otpSent": "Verification code sent to {phone}"
+  },
+  "explore": {
+    "title": "Explore Map",
+    "searchPlaceholder": "Search for a caravan, campsite, or destination...",
+    "loading": "Loading map...",
+    "resultsOnMap": "results on map",
+    "caravan": "Caravan",
+    "campsite": "Campsite",
+    "route": "Route",
+    "hub": "Pickup Point",
+    "viewDetails": "View Details",
+    "viewRoute": "View Route",
+    "persons": "persons",
+    "navigate": "Directions"
   },
   "footer": {
     "description": "A Saudi platform specialized in caravan rentals and outdoor travel experiences",
