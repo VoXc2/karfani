@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Karfani Web (Customer)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@karfani/web", "dev"],
+      "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "Karfani Admin (Ops Dashboard)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@karfani/admin", "dev"],
+      "port": 3001,
+      "autoPort": true
+    },
+    {
+      "name": "Karfani API (NestJS Backend)",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@karfani/api", "dev"],
+      "port": 4000,
+      "autoPort": true
+    }
+  ]
+}

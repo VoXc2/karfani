@@ -1,0 +1,824 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum UserRole {
+  CUSTOMER
+  OWNER
+  INSPECTOR
+  DISPATCHER
+  SUPPORT_AGENT
+  OPS_ADMIN
+  SUPER_ADMIN
+}
+
+enum CaravanType {
+  MOTORHOME
+  TRAILER
+  CAMPERVAN
+  POPUP
+  FIFTH_WHEEL
+}
+
+enum CaravanStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  SUSPENDED
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  CONFIRMED
+  PREPARING
+  DISPATCHED
+  HANDED_OVER
+  ACTIVE
+  RETURN_PENDING
+  RETURNED
+  POST_INSPECTION
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum PaymentType {
+  BOOKING_PAYMENT
+  SECURITY_DEPOSIT
+  DAMAGE_CHARGE
+  ADDON_PAYMENT
+  REFUND
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum InspectionType {
+  PRE_TRIP
+  POST_TRIP
+  MAINTENANCE_CHECK
+  INCIDENT
+}
+
+enum DamageStatus {
+  REPORTED
+  ASSESSING
+  ASSESSED
+  CUSTOMER_RESPONSE
+  RESOLVED
+  DISPUTED
+}
+
+enum DamageSeverity {
+  MINOR
+  MODERATE
+  MAJOR
+  CRITICAL
+}
+
+enum MaintenanceType {
+  ROUTINE
+  REPAIR
+  EMERGENCY
+  CLEANING
+  REFIT
+}
+
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TicketCategory {
+  BOOKING
+  PAYMENT
+  CARAVAN
+  DAMAGE
+  GENERAL
+  EMERGENCY
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_CUSTOMER
+  WAITING_INTERNAL
+  RESOLVED
+  CLOSED
+}
+
+enum PricingRuleType {
+  BASE
+  WEEKEND
+  SEASONAL
+  EVENT
+  LONG_STAY
+}
+
+enum LocationType {
+  CITY
+  HUB
+  CAMPSITE
+  PICKUP_POINT
+  DROPOFF_POINT
+}
+
+enum NotificationChannel {
+  SMS
+  WHATSAPP
+  PUSH
+  EMAIL
+  IN_APP
+}
+
+enum MediaType {
+  PHOTO
+  VIDEO
+  PANORAMA
+}
+
+enum DocumentType {
+  REGISTRATION
+  INSURANCE
+  PERMIT
+  INSPECTION_CERT
+}
+
+enum RouteDifficulty {
+  EASY
+  MODERATE
+  CHALLENGING
+  EXPERT
+}
+
+enum ContractStatus {
+  DRAFT
+  SENT
+  CUSTOMER_SIGNED
+  FULLY_SIGNED
+  EXPIRED
+  CANCELLED
+}
+
+enum ComplianceSeverity {
+  WARNING
+  CRITICAL
+}
+
+// ============================================================
+// MODELS
+// ============================================================
+
+model User {
+  id           String     @id @default(cuid())
+  phone        String     @unique
+  email        String?    @unique
+  passwordHash String?
+  nationalId   String?    @unique
+  fullNameAr   String
+  fullNameEn   String?
+  roles        UserRole[] @default([CUSTOMER])
+  locale       String     @default("ar")
+  avatarUrl    String?
+  isVerified   Boolean    @default(false)
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  drivingLicense  DrivingLicense?
+  ownerProfile    OwnerProfile?
+  bookings        Booking[]         @relation("CustomerBookings")
+  inspections     Inspection[]      @relation("InspectorInspections")
+  damageReports   DamageReport[]    @relation("ReporterDamageReports")
+  supportTickets  SupportTicket[]   @relation("UserTickets")
+  assignedTickets SupportTicket[]   @relation("AssignedTickets")
+  ticketMessages  TicketMessage[]
+  reviews         Review[]
+  notifications   Notification[]
+  resolvedFlags   ComplianceFlag[]  @relation("ResolvedByUser")
+
+  @@map("users")
+}
+
+model DrivingLicense {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  licenseNumber String
+  frontImageUrl String
+  backImageUrl  String
+  expiryDate    DateTime
+  isVerified    Boolean   @default(false)
+  verifiedAt    DateTime?
+  verifiedBy    String?
+  createdAt     DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("driving_licenses")
+}
+
+model OwnerProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  companyNameAr  String?
+  companyNameEn  String?
+  crNumber       String?
+  iban           String
+  commissionRate Decimal  @default(0.15)
+  isVerified     Boolean  @default(false)
+  bio            String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caravans Caravan[]
+  payouts  Payout[]
+
+  @@map("owner_profiles")
+}
+
+model Caravan {
+  id              String       @id @default(cuid())
+  ownerId         String
+  titleAr         String
+  titleEn         String?
+  descriptionAr   String
+  descriptionEn   String?
+  type            CaravanType
+  make            String
+  model           String
+  year            Int
+  plateNumber     String       @unique
+  vin             String?      @unique
+  sleeps          Int
+  length          Decimal?
+  amenities       Json         @default("{}")
+  status          CaravanStatus @default(DRAFT)
+  deliveryEnabled Boolean      @default(false)
+  deliveryFee     Decimal?
+  pickupLocationId String?
+  latitude        Float?
+  longitude       Float?
+  dailyRate       Decimal
+  weekendRate     Decimal?
+  weeklyDiscount  Decimal?
+  monthlyDiscount Decimal?
+  securityDeposit Decimal
+  minDays         Int          @default(1)
+  maxDays         Int?
+  rating          Decimal?
+  reviewCount     Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  owner           OwnerProfile      @relation(fields: [ownerId], references: [id])
+  pickupLocation  Location?         @relation("CaravanPickup", fields: [pickupLocationId], references: [id])
+  media           CaravanMedia[]
+  documents       CaravanDocument[]
+  availabilitySlots AvailabilitySlot[]
+  pricingRules    PricingRule[]
+  bookings        Booking[]
+  maintenanceJobs MaintenanceJob[]
+  reviews         Review[]
+
+  @@index([status, type])
+  @@index([ownerId])
+  @@map("caravans")
+}
+
+model CaravanMedia {
+  id           String    @id @default(cuid())
+  caravanId    String
+  url          String
+  thumbnailUrl String?
+  type         MediaType @default(PHOTO)
+  caption      String?
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+
+  caravan Caravan @relation(fields: [caravanId], references: [id], onDelete: Cascade)
+
+  @@map("caravan_media")
+}
+
+model CaravanDocument {
+  id         String       @id @default(cuid())
+  caravanId  String
+  type       DocumentType
+  documentUrl String
+  expiryDate DateTime?
+  isVerified Boolean      @default(false)
+  verifiedAt DateTime?
+  verifiedBy String?
+  notes      String?
+  createdAt  DateTime     @default(now())
+
+  caravan Caravan @relation(fields: [caravanId], references: [id], onDelete: Cascade)
+
+  @@map("caravan_documents")
+}
+
+model Location {
+  id            String       @id @default(cuid())
+  type          LocationType
+  nameAr        String
+  nameEn        String?
+  descriptionAr String?
+  descriptionEn String?
+  city          String
+  region        String
+  latitude      Float
+  longitude     Float
+  address       String?
+  facilities    Json?
+  capacity      Int?
+  contactPhone  String?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+
+  caravansPickup   Caravan[]   @relation("CaravanPickup")
+  campsites        Campsite[]
+  pickupBookings   Booking[]   @relation("PickupLocation")
+  dropoffBookings  Booking[]   @relation("DropoffLocation")
+
+  @@map("locations")
+}
+
+model Route {
+  id            String          @id @default(cuid())
+  titleAr       String
+  titleEn       String?
+  descriptionAr String
+  descriptionEn String?
+  difficulty    RouteDifficulty
+  distanceKm    Decimal
+  durationDays  Int
+  waypoints     Json
+  seasonStart   Int?
+  seasonEnd     Int?
+  coverImageUrl String?
+  isActive      Boolean         @default(true)
+  rating        Decimal?
+  reviewCount   Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  media     RouteMedia[]
+  campsites CampsiteOnRoute[]
+
+  @@map("routes")
+}
+
+model RouteMedia {
+  id           String    @id @default(cuid())
+  routeId      String
+  url          String
+  thumbnailUrl String?
+  type         MediaType @default(PHOTO)
+  caption      String?
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+
+  route Route @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@map("route_media")
+}
+
+model Campsite {
+  id            String   @id @default(cuid())
+  locationId    String
+  nameAr        String
+  nameEn        String?
+  descriptionAr String?
+  facilities    Json     @default("[]")
+  capacity      Int
+  permitRequired Boolean @default(false)
+  pricePerNight Decimal?
+  coverImageUrl String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  location Location          @relation(fields: [locationId], references: [id])
+  routes   CampsiteOnRoute[]
+
+  @@map("campsites")
+}
+
+model CampsiteOnRoute {
+  routeId    String
+  campsiteId String
+  dayNumber  Int
+  notes      String?
+
+  route    Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  campsite Campsite @relation(fields: [campsiteId], references: [id], onDelete: Cascade)
+
+  @@id([routeId, campsiteId])
+  @@map("campsite_on_route")
+}
+
+model AvailabilitySlot {
+  id          String   @id @default(cuid())
+  caravanId   String
+  date        DateTime
+  isAvailable Boolean  @default(true)
+  blockReason String?
+  createdAt   DateTime @default(now())
+
+  caravan Caravan @relation(fields: [caravanId], references: [id], onDelete: Cascade)
+
+  @@unique([caravanId, date])
+  @@map("availability_slots")
+}
+
+model PricingRule {
+  id         String          @id @default(cuid())
+  caravanId  String
+  type       PricingRuleType
+  name       String
+  dailyRate  Decimal
+  startDate  DateTime?
+  endDate    DateTime?
+  daysOfWeek Int[]
+  priority   Int             @default(0)
+  isActive   Boolean         @default(true)
+  createdAt  DateTime        @default(now())
+
+  caravan Caravan @relation(fields: [caravanId], references: [id], onDelete: Cascade)
+
+  @@map("pricing_rules")
+}
+
+model Booking {
+  id                String        @id @default(cuid())
+  bookingNumber     String        @unique
+  customerId        String
+  caravanId         String
+  startDate         DateTime
+  endDate           DateTime
+  totalDays         Int
+  status            BookingStatus @default(PENDING_PAYMENT)
+  basePrice         Decimal
+  addonsPrice       Decimal       @default(0)
+  deliveryPrice     Decimal       @default(0)
+  discountAmount    Decimal       @default(0)
+  vatAmount         Decimal
+  totalPrice        Decimal
+  securityDeposit   Decimal
+  depositRefunded   Decimal       @default(0)
+  pickupLocationId  String?
+  dropoffLocationId String?
+  deliveryLatitude  Float?
+  deliveryLongitude Float?
+  deliveryAddress   String?
+  specialRequests   String?
+  cancellationReason String?
+  promoCodeId       String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  customer        User            @relation("CustomerBookings", fields: [customerId], references: [id])
+  caravan         Caravan         @relation(fields: [caravanId], references: [id])
+  pickupLocation  Location?       @relation("PickupLocation", fields: [pickupLocationId], references: [id])
+  dropoffLocation Location?       @relation("DropoffLocation", fields: [dropoffLocationId], references: [id])
+  promoCode       PromoCode?      @relation(fields: [promoCodeId], references: [id])
+  addons          BookingAddon[]
+  payments        Payment[]
+  contract        Contract?
+  inspections     Inspection[]
+  damageReports   DamageReport[]
+  supportTickets  SupportTicket[]
+  review          Review?
+
+  @@index([caravanId, startDate, endDate])
+  @@index([customerId, status])
+  @@map("bookings")
+}
+
+model BookingAddon {
+  id          String  @id @default(cuid())
+  bookingId   String
+  nameAr      String
+  nameEn      String?
+  description String?
+  quantity    Int     @default(1)
+  unitPrice   Decimal
+  totalPrice  Decimal
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("booking_addons")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  bookingId       String
+  type            PaymentType
+  status          PaymentStatus @default(PENDING)
+  amount          Decimal
+  currency        String        @default("SAR")
+  gatewayId       String?
+  gatewayResponse Json?
+  method          String?
+  paidAt          DateTime?
+  failedAt        DateTime?
+  failureReason   String?
+  refundedAmount  Decimal       @default(0)
+  createdAt       DateTime      @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId, type])
+  @@map("payments")
+}
+
+model Payout {
+  id               String        @id @default(cuid())
+  ownerId          String
+  periodStart      DateTime
+  periodEnd        DateTime
+  grossAmount      Decimal
+  commissionAmount Decimal
+  netAmount        Decimal
+  iban             String
+  status           PaymentStatus @default(PENDING)
+  paidAt           DateTime?
+  reference        String?
+  createdAt        DateTime      @default(now())
+
+  owner OwnerProfile @relation(fields: [ownerId], references: [id])
+
+  @@map("payouts")
+}
+
+model Contract {
+  id                String         @id @default(cuid())
+  bookingId         String         @unique
+  templateVersion   String
+  contentJson       Json
+  pdfUrl            String?
+  status            ContractStatus @default(DRAFT)
+  customerSignedAt  DateTime?
+  operatorSignedAt  DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime       @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("contracts")
+}
+
+model Inspection {
+  id               String         @id @default(cuid())
+  bookingId        String
+  inspectorId      String
+  type             InspectionType
+  odometerKm       Int?
+  fuelLevel        Int?
+  cleanlinessScore Int?
+  overallScore     Int?
+  checklist        Json           @default("[]")
+  notes            String?
+  completedAt      DateTime?
+  createdAt        DateTime       @default(now())
+
+  booking   Booking           @relation(fields: [bookingId], references: [id])
+  inspector User              @relation("InspectorInspections", fields: [inspectorId], references: [id])
+  photos    InspectionPhoto[]
+  damageReports DamageReport[]
+
+  @@map("inspections")
+}
+
+model InspectionPhoto {
+  id           String   @id @default(cuid())
+  inspectionId String
+  url          String
+  category     String
+  notes        String?
+  createdAt    DateTime @default(now())
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@map("inspection_photos")
+}
+
+model DamageReport {
+  id               String         @id @default(cuid())
+  bookingId        String
+  inspectionId     String?
+  reportedById     String
+  severity         DamageSeverity
+  description      String
+  estimatedCost    Decimal?
+  actualCost       Decimal?
+  depositDeduction Decimal?
+  customerResponse String?
+  status           DamageStatus   @default(REPORTED)
+  resolvedAt       DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  booking    Booking       @relation(fields: [bookingId], references: [id])
+  inspection Inspection?   @relation(fields: [inspectionId], references: [id])
+  reportedBy User          @relation("ReporterDamageReports", fields: [reportedById], references: [id])
+  photos     DamagePhoto[]
+
+  @@map("damage_reports")
+}
+
+model DamagePhoto {
+  id             String   @id @default(cuid())
+  damageReportId String
+  url            String
+  description    String?
+  createdAt      DateTime @default(now())
+
+  damageReport DamageReport @relation(fields: [damageReportId], references: [id], onDelete: Cascade)
+
+  @@map("damage_photos")
+}
+
+model MaintenanceJob {
+  id            String              @id @default(cuid())
+  caravanId     String
+  type          MaintenanceType
+  priority      MaintenancePriority @default(MEDIUM)
+  status        MaintenanceStatus   @default(SCHEDULED)
+  description   String
+  parts         Json?
+  vendorName    String?
+  vendorContact String?
+  estimatedCost Decimal?
+  actualCost    Decimal?
+  scheduledDate DateTime?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  caravan Caravan @relation(fields: [caravanId], references: [id])
+
+  @@map("maintenance_jobs")
+}
+
+model SupportTicket {
+  id            String         @id @default(cuid())
+  ticketNumber  String         @unique
+  bookingId     String?
+  userId        String
+  assignedToId  String?
+  category      TicketCategory
+  priority      TicketPriority @default(MEDIUM)
+  status        TicketStatus   @default(OPEN)
+  subject       String
+  resolvedAt    DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  booking    Booking?        @relation(fields: [bookingId], references: [id])
+  user       User            @relation("UserTickets", fields: [userId], references: [id])
+  assignedTo User?           @relation("AssignedTickets", fields: [assignedToId], references: [id])
+  messages   TicketMessage[]
+
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id            String   @id @default(cuid())
+  ticketId      String
+  senderId      String
+  senderRole    String
+  content       String
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender User          @relation(fields: [senderId], references: [id])
+
+  @@map("ticket_messages")
+}
+
+model Review {
+  id             String    @id @default(cuid())
+  bookingId      String    @unique
+  customerId     String
+  caravanId      String
+  rating         Int
+  comment        String?
+  ownerReply     String?
+  ownerRepliedAt DateTime?
+  photos         String[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  booking  Booking @relation(fields: [bookingId], references: [id])
+  customer User    @relation(fields: [customerId], references: [id])
+  caravan  Caravan @relation(fields: [caravanId], references: [id])
+
+  @@map("reviews")
+}
+
+model PromoCode {
+  id               String   @id @default(cuid())
+  code             String   @unique
+  discountType     String
+  discountValue    Decimal
+  minBookingDays   Int?
+  minBookingAmount Decimal?
+  maxUses          Int?
+  currentUses      Int      @default(0)
+  maxUsesPerUser   Int      @default(1)
+  startDate        DateTime
+  endDate          DateTime
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  bookings Booking[]
+
+  @@map("promo_codes")
+}
+
+model Permit {
+  id          String   @id @default(cuid())
+  entityType  String
+  entityId    String
+  permitType  String
+  permitNumber String
+  issuedBy    String
+  issuedDate  DateTime
+  expiryDate  DateTime
+  documentUrl String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@map("permits")
+}
+
+model ComplianceFlag {
+  id           String             @id @default(cuid())
+  entityType   String
+  entityId     String
+  severity     ComplianceSeverity
+  reason       String
+  details      String?
+  resolvedAt   DateTime?
+  resolvedById String?
+  createdAt    DateTime           @default(now())
+
+  resolvedBy User? @relation("ResolvedByUser", fields: [resolvedById], references: [id])
+
+  @@index([entityType, entityId])
+  @@map("compliance_flags")
+}
+
+model Notification {
+  id            String              @id @default(cuid())
+  userId        String
+  channel       NotificationChannel
+  title         String
+  body          String
+  data          Json?
+  sentAt        DateTime?
+  readAt        DateTime?
+  failedAt      DateTime?
+  failureReason String?
+  createdAt     DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
