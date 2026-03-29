@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Sidebar from '../components/Sidebar';
 
 export const metadata: Metadata = {
   title: 'كرفاني - لوحة التحكم',
@@ -16,7 +17,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-cream text-charcoal antialiased">
-        {children}
+        <Sidebar />
+        <div className="ms-64 min-h-screen transition-all duration-300">
+          {children}
+        </div>
       </body>
     </html>
   );
