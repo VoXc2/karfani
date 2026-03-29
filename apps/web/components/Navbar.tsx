@@ -28,6 +28,7 @@ export default function Navbar() {
   return (
     <>
       <nav
+        aria-label="التنقل الرئيسي"
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-charcoal/5 py-2'
@@ -100,6 +101,8 @@ export default function Navbar() {
             {/* Mobile Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="القائمة الجانبية"
+              aria-expanded={mobileOpen}
               className="lg:hidden p-2 rounded-xl hover:bg-cream-dark transition-colors"
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

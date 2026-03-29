@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useParams } from 'next/navigation';
 import Navbar from '../../../../components/Navbar';
 import Footer from '../../../../components/Footer';
 import {
@@ -9,9 +10,10 @@ import {
   ChevronLeft, ChevronRight, ArrowLeft, MessageCircle, Phone
 } from 'lucide-react';
 import { Link } from '../../../../i18n/navigation';
+import { useCaravan } from '../../../../hooks/api/useCaravans';
 
-// Mock caravan data
-const caravan = {
+// Fallback caravan data
+const fallbackCaravan = {
   id: 1,
   title: 'كرفان عائلي فاخر - موديل 2024',
   type: 'كرفان متنقل',
@@ -46,11 +48,56 @@ const reviewsList = [
 ];
 
 export default function CaravanDetailPage() {
+  const params = useParams();
+  const caravanId = params?.id as string | undefined;
+  const { data: apiCaravan, isLoading, isError } = useCaravan(caravanId);
+
   const [activeImage, setActiveImage] = useState(0);
   const [liked, setLiked] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [guests, setGuests] = useState(2);
+
+  const caravan = useMemo(() => {
+    if (apiCaravan && typeof apiCaravan === 'object') {
+      const c = apiCaravan as any;
+      return {
+        ...fallbackCaravan,
+        id: c.id ?? c._id ?? fallbackCaravan.id,
+        title: c.title ?? c.name ?? fallbackCaravan.title,
+        type: c.type ?? fallbackCaravan.type,
+        location: c.location ?? c.city ?? fallbackCaravan.location,
+        region: c.region ?? fallbackCaravan.region,
+        sleeps: c.sleeps ?? c.capacity ?? fallbackCaravan.sleeps,
+        price: c.price ?? c.pricePerNight ?? fallbackCaravan.price,
+        weekendPrice: c.weekendPrice ?? fallbackCaravan.weekendPrice,
+        rating: c.rating ?? c.averageRating ?? fallbackCaravan.rating,
+        reviews: c.reviews ?? c.reviewCount ?? fallbackCaravan.reviews,
+        images: c.images ?? fallbackCaravan.images,
+        owner: c.owner ?? fallbackCaravan.owner,
+        description: c.description ?? fallbackCaravan.description,
+        amenities: c.amenities?.map?.((a: any) => {
+          if (typeof a === 'string') return fallbackCaravan.amenities.find((fa) => fa.name === a) ?? { icon: Check, name: a };
+          return { icon: a.icon ?? Check, name: a.name ?? a };
+        }) ?? fallbackCaravan.amenities,
+        rules: c.rules ?? fallbackCaravan.rules,
+        cancellation: c.cancellation ?? c.cancellationPolicy ?? fallbackCaravan.cancellation,
+      };
+    }
+    return fallbackCaravan;
+  }, [apiCaravan]);
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-cream">
+        <Navbar />
+        <div className="flex items-center justify-center pt-40 pb-20">
+          <div className="w-10 h-10 border-4 border-olive/20 border-t-olive rounded-full animate-spin" />
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   const nights = startDate && endDate
     ? Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (86400000))
@@ -97,7 +144,7 @@ export default function CaravanDetailPage() {
               </div>
               {/* Grid */}
               <div className="hidden lg:grid grid-cols-2 gap-3">
-                {caravan.images.slice(1, 5).map((img, i) => (
+                {caravan.images.slice(1, 5).map((img: string, i: number) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i + 1)}
@@ -128,7 +175,7 @@ export default function CaravanDetailPage() {
 
             {/* Thumbnails (mobile) */}
             <div className="flex lg:hidden items-center justify-center gap-2 mt-4">
-              {caravan.images.map((_, i) => (
+              {caravan.images.map((_: string, i: number) => (
                 <button
                   key={i}
                   onClick={() => setActiveImage(i)}
@@ -190,7 +237,7 @@ export default function CaravanDetailPage() {
               <div>
                 <h2 className="text-xl font-bold text-charcoal mb-4">المرافق والتجهيزات</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {caravan.amenities.map((a) => {
+                  {caravan.amenities.map((a: { icon: any; name: string }) => {
                     const Icon = a.icon;
                     return (
                       <div key={a.name} className="flex items-center gap-3 p-3 bg-white rounded-xl border border-cream-dark">
@@ -206,7 +253,7 @@ export default function CaravanDetailPage() {
               <div>
                 <h2 className="text-xl font-bold text-charcoal mb-4">قواعد الاستخدام</h2>
                 <div className="space-y-2">
-                  {caravan.rules.map((rule) => (
+                  {caravan.rules.map((rule: string) => (
                     <div key={rule} className="flex items-center gap-3 text-charcoal-light">
                       <Check className="w-4 h-4 text-olive shrink-0" />
                       <span className="text-sm">{rule}</span>
@@ -234,7 +281,7 @@ export default function CaravanDetailPage() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {reviewsList.map((review) => (
+                  {reviewsList.map((review: { name: string; avatar: string; rating: number; date: string; text: string }) => (
                     <div key={review.name} className="p-5 bg-white rounded-2xl border border-cream-dark">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-2xl">{review.avatar}</span>

@@ -3,7 +3,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import compression from 'compression';
+import rateLimit from 'express-rate-limit';
 import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +20,24 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 100,
+      message: { statusCode: 429, message: 'Too many requests, please try again later.' },
+    }),
+  );
+
+  app.use(
+    '/api/v1/auth',
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 10,
+      message: { statusCode: 429, message: 'Too many authentication attempts, please try again later.' },
+    }),
+  );
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
   app.setGlobalPrefix('api/v1');
 

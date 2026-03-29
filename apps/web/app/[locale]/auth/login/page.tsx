@@ -3,27 +3,34 @@
 import { useState } from 'react';
 import { Compass, Phone, ArrowLeft, Shield, Lock } from 'lucide-react';
 import { Link } from '../../../../i18n/navigation';
+import { useAuth } from '../../../../hooks/useAuth';
+import { api } from '../../../../lib/api';
 
 type Step = 'phone' | 'otp';
 
 export default function LoginPage() {
+  const auth = useAuth();
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSendOtp = () => {
+  const handleSendOtp = async () => {
     if (phone.length < 9) {
       setError('الرجاء إدخال رقم جوال صحيح');
       return;
     }
     setError('');
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await api.sendOtp(phone);
       setStep('otp');
-    }, 1500);
+    } catch (err: any) {
+      setError(err.message || 'حدث خطأ أثناء إرسال رمز التحقق');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -46,7 +53,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const code = otp.join('');
     if (code.length < 6) {
       setError('الرجاء إدخال رمز التحقق كاملاً');
@@ -54,10 +61,15 @@ export default function LoginPage() {
     }
     setError('');
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await auth.login(phone, code);
+      // Redirect on success
+      window.location.href = '/';
+    } catch (err: any) {
+      setError(err.message || 'رمز التحقق غير صحيح');
+    } finally {
       setLoading(false);
-      // Would redirect on success
-    }, 1500);
+    }
   };
 
   return (

@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
 import CaravanCard from '../../../components/CaravanCard';
 import { Search, SlidersHorizontal, X, MapPin, Users, ChevronDown } from 'lucide-react';
+import { useCaravans } from '../../../hooks/api/useCaravans';
 
-const allCaravans = [
+const fallbackCaravans = [
   { id: 1, title: 'كرفان عائلي فاخر', type: 'كرفان متنقل', location: 'الرياض', sleeps: 6, price: 1200, rating: 4.8, reviews: 124, image: '🏕️', amenities: ['wifi', 'ac', 'power'], featured: true },
   { id: 2, title: 'فان مغامرات الصحراء', type: 'فان مجهز', location: 'العلا', sleeps: 2, price: 700, rating: 4.9, reviews: 89, image: '🚐', amenities: ['wifi', 'heating'] },
   { id: 3, title: 'كرفان رحلات طويلة', type: 'مقطورة', location: 'عسير', sleeps: 4, price: 950, rating: 4.7, reviews: 67, image: '🏔️', amenities: ['ac', 'power', 'wifi'] },
@@ -30,6 +31,7 @@ const sortOptions = [
 
 export default function CaravansPage() {
   const t = useTranslations();
+  const { data: apiCaravans, isLoading, isError } = useCaravans();
   const [search, setSearch] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('الكل');
   const [selectedType, setSelectedType] = useState('الكل');
@@ -37,7 +39,26 @@ export default function CaravansPage() {
   const [sortBy, setSortBy] = useState('recommended');
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  let filtered = allCaravans.filter((c) => {
+  const allCaravans = useMemo(() => {
+    if (apiCaravans && Array.isArray(apiCaravans) && apiCaravans.length > 0) {
+      return (apiCaravans as any[]).map((c: any) => ({
+        id: c.id ?? c._id,
+        title: c.title ?? c.name ?? '',
+        type: c.type ?? '',
+        location: c.location ?? c.city ?? '',
+        sleeps: c.sleeps ?? c.capacity ?? 0,
+        price: c.price ?? c.pricePerNight ?? 0,
+        rating: c.rating ?? c.averageRating ?? 0,
+        reviews: c.reviews ?? c.reviewCount ?? 0,
+        image: c.image ?? c.images?.[0] ?? '🏕️',
+        amenities: c.amenities ?? [],
+        featured: c.featured ?? false,
+      }));
+    }
+    return fallbackCaravans;
+  }, [apiCaravans]);
+
+  let filtered = allCaravans.filter((c: any) => {
     if (search && !c.title.includes(search) && !c.location.includes(search)) return false;
     if (selectedLocation !== 'الكل' && c.location !== selectedLocation) return false;
     if (selectedType !== 'الكل' && c.type !== selectedType) return false;
@@ -67,6 +88,13 @@ export default function CaravansPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex items-center justify-center py-12">
+            <div className="w-10 h-10 border-4 border-olive/20 border-t-olive rounded-full animate-spin" />
+          </div>
+        )}
+
         {/* Search & Filter Bar */}
         <div className="bg-white rounded-2xl shadow-sm border border-cream-dark p-4 mb-8 sticky top-20 z-30">
           <div className="flex flex-col lg:flex-row gap-4">

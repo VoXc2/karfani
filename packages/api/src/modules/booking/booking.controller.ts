@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { BookingService } from './booking.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { CreateBookingDto } from './dto/create-booking.dto';
 
 @ApiTags('Bookings')
 @Controller('bookings')
@@ -13,7 +14,7 @@ export class BookingController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'إنشاء حجز' })
-  create(@CurrentUser('sub') userId: string, @Body() data: any) {
+  create(@CurrentUser('sub') userId: string, @Body() data: CreateBookingDto) {
     return this.service.create(userId, data);
   }
 

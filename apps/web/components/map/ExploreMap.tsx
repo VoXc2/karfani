@@ -10,6 +10,7 @@ import {
   Compass, Maximize2, Minimize2, Route,
 } from 'lucide-react';
 import MapPopupCard from './MapPopupCard';
+import { useMapData } from '../../hooks/api/useLocations';
 
 // Mapbox public token - in production this should be in env
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || 'pk.eyJ1Ijoia2FyZmFuaSIsImEiOiJjbTl6OHQ2YnUwMWRjMnFyMHNlNm9sdjRwIn0.placeholder';
@@ -71,6 +72,7 @@ const filterCategories = [
 
 export default function ExploreMap() {
   const t = useTranslations('explore');
+  const { data: apiMapData } = useMapData();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -89,8 +91,30 @@ export default function ExploreMap() {
     outdoors: 'mapbox://styles/mapbox/outdoors-v12',
   };
 
+  // Use API data if available, otherwise fall back to mock data
+  const locations: MapLocation[] = (() => {
+    if (apiMapData && Array.isArray(apiMapData) && apiMapData.length > 0) {
+      return (apiMapData as any[]).map((item: any) => ({
+        id: String(item.id ?? item._id ?? ''),
+        type: item.type ?? 'caravan',
+        title: item.title ?? item.name ?? '',
+        subtitle: item.subtitle ?? item.location ?? item.city ?? '',
+        lat: item.lat ?? item.latitude ?? 0,
+        lng: item.lng ?? item.longitude ?? 0,
+        price: item.price ?? item.pricePerNight,
+        rating: item.rating ?? item.averageRating,
+        reviews: item.reviews ?? item.reviewCount,
+        image: item.image ?? item.images?.[0] ?? '🏕️',
+        sleeps: item.sleeps ?? item.capacity,
+        amenities: item.amenities,
+        difficulty: item.difficulty,
+      }));
+    }
+    return mockLocations;
+  })();
+
   // Filter locations
-  const filteredLocations = mockLocations.filter((loc) => {
+  const filteredLocations = locations.filter((loc) => {
     if (activeFilter !== 'all' && loc.type !== activeFilter) return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
