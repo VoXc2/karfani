@@ -40,3 +40,4 @@ npm-debug.log*
 # Temp
 tmp/
 temp/
+apps/web/tsconfig.tsbuildinfo
