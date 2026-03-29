@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
 import Footer from '../../../components/Footer';
 import CaravanCard from '../../../components/CaravanCard';
+import CaravanCardSkeleton from '../../../components/CaravanCardSkeleton';
 import { Search, SlidersHorizontal, X, MapPin, Users, ChevronDown } from 'lucide-react';
 import { useCaravans } from '../../../hooks/api/useCaravans';
 
@@ -31,6 +33,7 @@ const sortOptions = [
 
 export default function CaravansPage() {
   const t = useTranslations();
+  const searchParams = useSearchParams();
   const { data: apiCaravans, isLoading, isError } = useCaravans();
   const [search, setSearch] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('الكل');
@@ -38,6 +41,24 @@ export default function CaravansPage() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 3000]);
   const [sortBy, setSortBy] = useState('recommended');
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Pre-fill filters from URL search params (connected to hero search)
+  useEffect(() => {
+    const region = searchParams.get('region');
+    const searchQuery = searchParams.get('search');
+
+    if (region) {
+      const matchedLocation = locations.find((loc) => loc === region);
+      if (matchedLocation) {
+        setSelectedLocation(matchedLocation);
+      } else {
+        setSearch(region);
+      }
+    }
+    if (searchQuery) {
+      setSearch(searchQuery);
+    }
+  }, [searchParams]);
 
   const allCaravans = useMemo(() => {
     if (apiCaravans && Array.isArray(apiCaravans) && apiCaravans.length > 0) {
@@ -90,8 +111,10 @@ export default function CaravansPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
         {/* Loading State */}
         {isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="w-10 h-10 border-4 border-olive/20 border-t-olive rounded-full animate-spin" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 py-12">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <CaravanCardSkeleton key={i} />
+            ))}
           </div>
         )}
 

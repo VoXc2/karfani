@@ -20,12 +20,18 @@ import { AdminModule } from './modules/admin/admin.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { HealthModule } from './modules/health/health.module';
+import { EventsModule } from './gateways/events.module';
+import { QueueModule } from './queues/queue.module';
+import { CacheModule } from './common/cache/cache.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     EventEmitterModule.forRoot(),
     PrismaModule,
+    EventsModule,
+    QueueModule,
+    CacheModule,
     AuthModule,
     InventoryModule,
     AvailabilityModule,

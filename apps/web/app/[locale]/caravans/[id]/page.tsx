@@ -11,6 +11,11 @@ import {
 } from 'lucide-react';
 import { Link } from '../../../../i18n/navigation';
 import { useCaravan } from '../../../../hooks/api/useCaravans';
+import ShareButton from '../../../../components/ui/ShareButton';
+import LiveBadge from '../../../../components/ui/LiveBadge';
+import UrgencyBanner from '../../../../components/ui/UrgencyBanner';
+import JsonLd from '../../../../components/JsonLd';
+import { caravanJsonLd } from '../../../../lib/structured-data';
 
 // Fallback caravan data
 const fallbackCaravan = {
@@ -109,10 +114,14 @@ export default function CaravanDetailPage() {
 
   return (
     <main className="min-h-screen bg-cream">
+      <JsonLd data={caravanJsonLd(caravan)} />
       <Navbar />
 
       <div className="pt-24 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Live Badge */}
+          <LiveBadge count={5} />
+
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-charcoal-light mb-6">
             <Link href="/" className="hover:text-olive transition-colors">الرئيسية</Link>
@@ -160,9 +169,7 @@ export default function CaravanDetailPage() {
 
             {/* Action Buttons */}
             <div className="absolute top-4 end-4 flex items-center gap-2">
-              <button className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors">
-                <Share2 className="w-4 h-4 text-charcoal" />
-              </button>
+              <ShareButton title={caravan.title} description={`${caravan.price} ر.س / ليلة - ${caravan.location}`} />
               <button
                 onClick={() => setLiked(!liked)}
                 className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all ${
@@ -202,6 +209,7 @@ export default function CaravanDetailPage() {
                   </div>
                 </div>
                 <h1 className="text-2xl md:text-3xl font-bold text-charcoal mb-2">{caravan.title}</h1>
+                <UrgencyBanner availableDates={7} />
                 <div className="flex items-center gap-4 text-charcoal-light">
                   <div className="flex items-center gap-1.5">
                     <MapPin className="w-4 h-4" />

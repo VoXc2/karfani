@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from '../i18n/navigation';
 import { Search, Calendar, MapPin, ArrowLeft, Star, Shield, Truck } from 'lucide-react';
 
 const heroImages = [
@@ -19,8 +20,21 @@ const stats = [
 
 export default function HeroSection() {
   const t = useTranslations('hero');
+  const router = useRouter();
   const [activeSlide, setActiveSlide] = useState(0);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [location, setLocation] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (location) params.set('region', location);
+    if (startDate) params.set('startDate', startDate);
+    if (endDate) params.set('endDate', endDate);
+    const query = params.toString();
+    router.push(`/caravans${query ? `?${query}` : ''}`);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -171,6 +185,8 @@ export default function HeroSection() {
                   <input
                     type="text"
                     placeholder="الرياض، عسير، جدة..."
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
                     className="w-full text-sm text-charcoal-light outline-none bg-transparent mt-0.5"
                     onFocus={() => setSearchFocused(true)}
                     onBlur={() => setSearchFocused(false)}
@@ -186,6 +202,8 @@ export default function HeroSection() {
                   <label className="block text-xs font-semibold text-charcoal">{t('startDate')}</label>
                   <input
                     type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
                     className="w-full text-sm text-charcoal-light outline-none bg-transparent mt-0.5"
                     onFocus={() => setSearchFocused(true)}
                     onBlur={() => setSearchFocused(false)}
@@ -201,6 +219,8 @@ export default function HeroSection() {
                   <label className="block text-xs font-semibold text-charcoal">{t('endDate')}</label>
                   <input
                     type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
                     className="w-full text-sm text-charcoal-light outline-none bg-transparent mt-0.5"
                     onFocus={() => setSearchFocused(true)}
                     onBlur={() => setSearchFocused(false)}
@@ -208,7 +228,7 @@ export default function HeroSection() {
                 </div>
               </div>
 
-              <button className="flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-copper to-copper-light text-white rounded-xl hover:shadow-lg hover:shadow-copper/30 transition-all duration-300 font-semibold hover:-translate-y-0.5 active:translate-y-0 shrink-0">
+              <button onClick={handleSearch} className="flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-copper to-copper-light text-white rounded-xl hover:shadow-lg hover:shadow-copper/30 transition-all duration-300 font-semibold hover:-translate-y-0.5 active:translate-y-0 shrink-0">
                 <Search className="w-5 h-5" />
                 <span>{t('searchButton')}</span>
               </button>

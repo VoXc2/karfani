@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import CaravanCard from './CaravanCard';
+import CaravanCardSkeleton from './CaravanCardSkeleton';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from '../i18n/navigation';
@@ -18,6 +20,7 @@ const caravans = [
 export default function FeaturedCaravans() {
   const t = useTranslations('home');
   const { ref, visible } = useScrollAnimation();
+  const [loading] = useState(false);
 
   return (
     <section className="py-24 bg-white" id="caravans">

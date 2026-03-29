@@ -1,4 +1,7 @@
 import { setRequestLocale } from 'next-intl/server';
+import JsonLd from '../../components/JsonLd';
+import { organizationJsonLd, websiteJsonLd } from '../../lib/structured-data';
+import RecentBookingsTicker from '../../components/RecentBookingsTicker';
 import Navbar from '../../components/Navbar';
 import HeroSection from '../../components/HeroSection';
 import FeaturedCaravans from '../../components/FeaturedCaravans';
@@ -15,6 +18,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <main className="overflow-hidden">
+      <JsonLd data={organizationJsonLd()} />
+      <JsonLd data={websiteJsonLd()} />
       <Navbar />
       <HeroSection />
       <FeaturedCaravans />
@@ -23,6 +28,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <WhyKarfani />
       <TestimonialsSection />
       <CTASection />
+      <RecentBookingsTicker />
       <Footer />
     </main>
   );
