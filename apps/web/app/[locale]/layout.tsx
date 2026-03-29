@@ -1,6 +1,8 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, setRequestLocale } from 'next-intl/server';
 import { routing } from '../../i18n/routing';
+import QueryProvider from '../../providers/QueryProvider';
+import AuthProvider from '../../providers/AuthProvider';
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -28,7 +30,11 @@ export default async function LocaleLayout({
       </head>
       <body className="bg-cream text-charcoal antialiased">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <QueryProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </QueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>
