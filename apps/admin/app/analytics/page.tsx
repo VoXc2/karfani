@@ -2,12 +2,13 @@
 
 import TopBar from '../../components/TopBar';
 import {
-  TrendingUp, TrendingDown, Users, MapPin, Star, Calendar
+  TrendingUp, TrendingDown, Users, MapPin, Star, Calendar, Loader2
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
+import { useAdminRevenue } from '../../hooks/useAdmin';
 
 const monthlyRevenue = [
   { month: 'يناير', revenue: 180000, expenses: 45000 },
@@ -55,11 +56,27 @@ const topCaravans = [
 ];
 
 export default function AnalyticsPage() {
+  const { data: apiRevenue, isLoading } = useAdminRevenue();
+
+  // Use API data when available, fall back to mock
+  const displayMonthlyRevenue = apiRevenue?.monthlyRevenue ?? monthlyRevenue;
+  const displayRegionData = apiRevenue?.regionData ?? regionData;
+  const displayTypeDistribution = apiRevenue?.typeDistribution ?? typeDistribution;
+  const displayOccupancyData = apiRevenue?.occupancyData ?? occupancyData;
+  const displayTopCaravans = apiRevenue?.topCaravans ?? topCaravans;
+
   return (
     <div className="min-h-screen">
       <TopBar title="التحليلات والتقارير" />
 
       <div className="p-6 space-y-6">
+        {isLoading && (
+          <div className="flex items-center gap-2 text-sm text-charcoal-light">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            جاري تحميل التحليلات...
+          </div>
+        )}
+
         {/* Top KPIs */}
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {[
@@ -98,7 +115,7 @@ export default function AnalyticsPage() {
             <h3 className="font-bold text-charcoal mb-1">الإيرادات مقابل المصروفات</h3>
             <p className="text-xs text-charcoal-light mb-6">أداء مالي شهري</p>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={monthlyRevenue}>
+              <AreaChart data={displayMonthlyRevenue}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#4A5D3A" stopOpacity={0.3} />
@@ -125,14 +142,14 @@ export default function AnalyticsPage() {
             <p className="text-xs text-charcoal-light mb-4">توزيع حسب النوع</p>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={typeDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
-                  {typeDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                <Pie data={displayTypeDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
+                  {displayTypeDistribution.map((entry: any, i: number) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
                 <Tooltip formatter={(v: number, n: string) => [`${v}%`, n]} />
               </PieChart>
             </ResponsiveContainer>
             <div className="space-y-2 mt-4">
-              {typeDistribution.map((item) => (
+              {displayTypeDistribution.map((item: any) => (
                 <div key={item.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
@@ -152,7 +169,7 @@ export default function AnalyticsPage() {
             <h3 className="font-bold text-charcoal mb-1">أداء المناطق</h3>
             <p className="text-xs text-charcoal-light mb-6">حجوزات وإيرادات حسب المنطقة</p>
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={regionData} layout="vertical">
+              <BarChart data={displayRegionData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" stroke="#F0E8DA" />
                 <XAxis type="number" tick={{ fontSize: 11, fill: '#4A4A4A' }} />
                 <YAxis dataKey="region" type="category" tick={{ fontSize: 12, fill: '#4A4A4A' }} width={60} />
@@ -167,7 +184,7 @@ export default function AnalyticsPage() {
             <h3 className="font-bold text-charcoal mb-1">معدل الإشغال</h3>
             <p className="text-xs text-charcoal-light mb-6">نسبة إشغال الكرفانات أسبوعياً</p>
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={occupancyData}>
+              <LineChart data={displayOccupancyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F0E8DA" />
                 <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#4A4A4A' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#4A4A4A' }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
@@ -195,7 +212,7 @@ export default function AnalyticsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-cream-dark">
-              {topCaravans.map((c, i) => (
+              {displayTopCaravans.map((c: any, i: number) => (
                 <tr key={c.name} className="hover:bg-cream/30 transition-colors">
                   <td className="px-5 py-3 text-sm font-bold text-olive">{i + 1}</td>
                   <td className="px-5 py-3 text-sm font-medium text-charcoal">{c.name}</td>

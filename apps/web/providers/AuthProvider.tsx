@@ -68,6 +68,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setUser(newUser);
 
     localStorage.setItem(STORAGE_KEYS.accessToken, newAccess);
+    document.cookie = `karfani_access_token=${newAccess}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
     if (newRefresh) {
       localStorage.setItem(STORAGE_KEYS.refreshToken, newRefresh);
     }
@@ -82,6 +83,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORAGE_KEYS.accessToken);
     localStorage.removeItem(STORAGE_KEYS.refreshToken);
     localStorage.removeItem(STORAGE_KEYS.user);
+    document.cookie = 'karfani_access_token=; path=/; max-age=0';
   }, []);
 
   return (

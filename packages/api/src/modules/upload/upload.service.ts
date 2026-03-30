@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UploadService {
+  private readonly logger = new Logger('UploadService');
   private s3: S3Client;
   private bucket: string;
 
-  constructor(private config: ConfigService) {
+  constructor(
+    private config: ConfigService,
+    @InjectQueue('image-processing') private imageQueue: Queue,
+  ) {
     const endpoint = this.config.get('MINIO_ENDPOINT');
     const isLocal = !!endpoint;
 
@@ -49,10 +55,19 @@ export class UploadService {
       ? `${endpoint}/${this.bucket}`
       : `https://${this.bucket}.s3.${this.config.get('AWS_REGION')}.amazonaws.com`;
 
+    const fileUrl = `${baseUrl}/${key}`;
+
+    // Queue image resize job asynchronously
+    try {
+      await this.imageQueue.add('resize', { fileUrl, width: 800, height: 600 });
+    } catch (error) {
+      this.logger.warn(`Failed to queue image resize job: ${error}`);
+    }
+
     return {
       success: true,
       data: {
-        url: `${baseUrl}/${key}`,
+        url: fileUrl,
         key,
       },
     };

@@ -1,10 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 import { PrismaService } from '../../common/prisma/prisma.service';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger('NotificationsService');
+
+  constructor(
+    private prisma: PrismaService,
+    @InjectQueue('notifications') private notificationQueue: Queue,
+  ) {}
 
   @OnEvent('booking.created')
   async handleBookingCreated(booking: any) {
@@ -27,7 +34,23 @@ export class NotificationsService {
   @OnEvent('auth.userCreated')
   async handleUserCreated(user: any) {
     console.log(`[Notification] مستخدم جديد: ${user.phone}`);
-    // TODO: Send welcome SMS via Unifonic
+    await this.sendSms(user.phone, 'مرحباً بك في كرفاني! نتمنى لك تجربة ممتعة.');
+  }
+
+  async sendSms(phone: string, message: string) {
+    try {
+      await this.notificationQueue.add('sms', { phone, message });
+    } catch (error) {
+      this.logger.warn(`Failed to queue SMS job: ${error}`);
+    }
+  }
+
+  async sendEmail(to: string, subject: string, body: string) {
+    try {
+      await this.notificationQueue.add('email', { to, subject, body });
+    } catch (error) {
+      this.logger.warn(`Failed to queue email job: ${error}`);
+    }
   }
 
   private async createNotification(userId: string, title: string, body: string, channel: string) {

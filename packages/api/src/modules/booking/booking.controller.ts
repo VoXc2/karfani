@@ -26,6 +26,14 @@ export class BookingController {
     return this.service.findByUser(userId, query);
   }
 
+  @Get('owner')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'حجوزات كرفاناتي (المالك)' })
+  getOwnerBookings(@CurrentUser('sub') userId: string, @Query() query: any) {
+    return this.service.findByOwner(userId, query);
+  }
+
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()

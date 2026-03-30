@@ -98,6 +98,35 @@ export class BookingService {
     return { success: true, data: bookings, pagination: { page: Number(page), limit: Number(limit), total, totalPages: Math.ceil(total / Number(limit)) } };
   }
 
+  async findByOwner(userId: string, query: any) {
+    const { status, page = 1, limit = 20 } = query;
+    const owner = await this.prisma.ownerProfile.findUnique({ where: { userId } });
+    if (!owner) throw new NotFoundException('يجب إنشاء ملف مالك أولاً');
+
+    const where: any = { caravan: { ownerId: owner.id } };
+    if (status) where.status = status;
+
+    const [bookings, total] = await Promise.all([
+      this.prisma.booking.findMany({
+        where,
+        include: {
+          caravan: { include: { media: { take: 1 } } },
+          customer: { select: { fullNameAr: true, fullNameEn: true, phone: true, avatarUrl: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+      }),
+      this.prisma.booking.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: bookings,
+      pagination: { page: Number(page), limit: Number(limit), total, totalPages: Math.ceil(total / Number(limit)) },
+    };
+  }
+
   async findOne(id: string) {
     const booking = await this.prisma.booking.findUnique({
       where: { id },

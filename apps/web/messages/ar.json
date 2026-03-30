@@ -248,5 +248,76 @@
     "code": "404",
     "description": "يبدو أنك ضللت الطريق! الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "backHome": "العودة للرئيسية"
+  },
+  "owner": {
+    "dashboard": "لوحة التحكم",
+    "myCaravans": "كرفاناتي",
+    "addCaravan": "إضافة كرفان",
+    "bookings": "الحجوزات",
+    "earnings": "الأرباح",
+    "calendar": "التقويم",
+    "totalRevenue": "إجمالي الإيرادات",
+    "activeBookings": "الحجوزات النشطة",
+    "totalCaravans": "عدد الكرفانات",
+    "monthlyEarnings": "أرباح الشهر",
+    "pendingBookings": "حجوزات معلقة",
+    "acceptBooking": "قبول الحجز",
+    "rejectBooking": "رفض الحجز",
+    "caravanStatus": "حالة الكرفان",
+    "editCaravan": "تعديل الكرفان",
+    "blockDates": "حظر تواريخ",
+    "requestPayout": "طلب سحب"
+  },
+  "faq": {
+    "title": "الأسئلة الشائعة",
+    "subtitle": "إجابات على أسئلتك",
+    "booking": "الحجز",
+    "payment": "الدفع",
+    "cancellation": "الإلغاء",
+    "owners": "ملاك الكرفانات",
+    "general": "عام",
+    "notFound": "لم نجد ما تبحث عنه"
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "writeReview": "اكتب تقييمك",
+    "rating": "التقييم",
+    "comment": "تعليقك",
+    "submit": "إرسال التقييم",
+    "thankYou": "شكراً لتقييمك!",
+    "noReviews": "لا توجد تقييمات بعد"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "notifications": "الإشعارات",
+    "language": "اللغة",
+    "emailNotifications": "إشعارات البريد",
+    "smsNotifications": "إشعارات الرسائل",
+    "pushNotifications": "الإشعارات الفورية",
+    "deleteAccount": "حذف الحساب",
+    "deleteWarning": "هذا الإجراء لا يمكن التراجع عنه",
+    "saved": "تم حفظ الإعدادات"
+  },
+  "favorites": {
+    "title": "المفضلة",
+    "empty": "لم تضف أي كرفان إلى المفضلة بعد",
+    "browseCaravans": "تصفح الكرفانات",
+    "remove": "إزالة من المفضلة"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "invalidPhone": "رقم الجوال غير صحيح",
+    "invalidEmail": "البريد الإلكتروني غير صحيح",
+    "minLength": "الحد الأدنى {min} أحرف",
+    "maxLength": "الحد الأقصى {max} أحرف",
+    "invalidDate": "التاريخ غير صحيح",
+    "pastDate": "لا يمكن اختيار تاريخ في الماضي"
+  },
+  "notifications": {
+    "bookingConfirmed": "تم تأكيد حجزك بنجاح",
+    "bookingCancelled": "تم إلغاء الحجز",
+    "paymentReceived": "تم استلام الدفعة",
+    "reviewPosted": "تم نشر تقييمك",
+    "caravanApproved": "تمت الموافقة على الكرفان"
   }
 }

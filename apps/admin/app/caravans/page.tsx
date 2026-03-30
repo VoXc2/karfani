@@ -4,8 +4,9 @@ import { useState } from 'react';
 import TopBar from '../../components/TopBar';
 import {
   Search, Plus, Eye, Edit, MoreHorizontal, MapPin, Users, Star,
-  CheckCircle, AlertTriangle, XCircle, Truck, Filter
+  CheckCircle, AlertTriangle, XCircle, Truck, Filter, Loader2
 } from 'lucide-react';
+import { useAdminCaravans, useApproveCaravan } from '../../hooks/useAdmin';
 
 const statusConfig: Record<string, { label: string; bg: string; text: string }> = {
   active: { label: 'نشط', bg: 'bg-olive/10', text: 'text-olive' },
@@ -29,8 +30,14 @@ export default function CaravansPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [page, setPage] = useState(1);
+  const { data: apiCaravans, isLoading } = useAdminCaravans(page, statusFilter === 'all' ? undefined : statusFilter);
+  const approveCaravan = useApproveCaravan();
 
-  const filtered = caravans.filter((c) => {
+  // Use API data when available, fall back to mock
+  const allCaravans: typeof caravans = apiCaravans?.items ?? caravans;
+
+  const filtered = allCaravans.filter((c: any) => {
     if (statusFilter !== 'all' && c.status !== statusFilter) return false;
     if (search && !c.title.includes(search) && !c.id.includes(search) && !c.owner.includes(search)) return false;
     return true;
@@ -41,6 +48,13 @@ export default function CaravansPage() {
       <TopBar title="إدارة الكرفانات" />
 
       <div className="p-6 space-y-6">
+        {isLoading && (
+          <div className="flex items-center gap-2 text-sm text-charcoal-light">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            جاري تحميل الكرفانات...
+          </div>
+        )}
+
         {/* Summary */}
         <div className="grid sm:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 border border-cream-dark">
@@ -49,7 +63,7 @@ export default function CaravansPage() {
                 <CheckCircle className="w-5 h-5 text-olive" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-charcoal">{caravans.filter(c => c.status === 'active').length}</p>
+                <p className="text-2xl font-bold text-charcoal">{allCaravans.filter((c: any) => c.status === 'active').length}</p>
                 <p className="text-xs text-charcoal-light">كرفان نشط</p>
               </div>
             </div>
@@ -60,7 +74,7 @@ export default function CaravansPage() {
                 <AlertTriangle className="w-5 h-5 text-copper" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-charcoal">{caravans.filter(c => c.status === 'maintenance').length}</p>
+                <p className="text-2xl font-bold text-charcoal">{allCaravans.filter((c: any) => c.status === 'maintenance').length}</p>
                 <p className="text-xs text-charcoal-light">تحت الصيانة</p>
               </div>
             </div>
@@ -71,7 +85,7 @@ export default function CaravansPage() {
                 <Truck className="w-5 h-5 text-sand-dark" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-charcoal">{caravans.filter(c => c.status === 'pending').length}</p>
+                <p className="text-2xl font-bold text-charcoal">{allCaravans.filter((c: any) => c.status === 'pending').length}</p>
                 <p className="text-xs text-charcoal-light">بانتظار الموافقة</p>
               </div>
             </div>
@@ -82,7 +96,7 @@ export default function CaravansPage() {
                 <Star className="w-5 h-5 text-olive" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-charcoal">{(caravans.reduce((a, c) => a + c.rating, 0) / caravans.length).toFixed(1)}</p>
+                <p className="text-2xl font-bold text-charcoal">{(allCaravans.reduce((a: number, c: any) => a + c.rating, 0) / (allCaravans.length || 1)).toFixed(1)}</p>
                 <p className="text-xs text-charcoal-light">متوسط التقييم</p>
               </div>
             </div>
@@ -125,7 +139,7 @@ export default function CaravansPage() {
         {/* Caravans Grid */}
         <div className="grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-5">
           {filtered.map((c) => {
-            const status = statusConfig[c.status] || statusConfig.active;
+            const status = (statusConfig[c.status] ?? statusConfig.active)!;
             return (
               <div key={c.id} className="bg-white rounded-2xl border border-cream-dark overflow-hidden hover:shadow-lg hover:shadow-charcoal/5 transition-all group">
                 {/* Image */}
@@ -181,10 +195,25 @@ export default function CaravansPage() {
                       <Eye className="w-3.5 h-3.5" />
                       عرض
                     </button>
-                    <button className="flex-1 flex items-center justify-center gap-1.5 py-2 border border-cream-dark text-charcoal-light rounded-xl text-xs font-medium hover:bg-cream transition-all">
-                      <Edit className="w-3.5 h-3.5" />
-                      تعديل
-                    </button>
+                    {c.status === 'pending' ? (
+                      <button
+                        onClick={() => approveCaravan.mutate(c.id)}
+                        disabled={approveCaravan.isPending}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 border border-olive bg-olive text-white rounded-xl text-xs font-medium hover:bg-olive-dark transition-all disabled:opacity-50"
+                      >
+                        {approveCaravan.isPending ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <CheckCircle className="w-3.5 h-3.5" />
+                        )}
+                        موافقة
+                      </button>
+                    ) : (
+                      <button className="flex-1 flex items-center justify-center gap-1.5 py-2 border border-cream-dark text-charcoal-light rounded-xl text-xs font-medium hover:bg-cream transition-all">
+                        <Edit className="w-3.5 h-3.5" />
+                        تعديل
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { InventoryService } from './inventory.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
@@ -21,6 +21,14 @@ export class InventoryController {
     return this.service.findFeatured();
   }
 
+  @Get('mine')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'كرفاناتي (المالك)' })
+  findMine(@CurrentUser('sub') userId: string, @Query() query: any) {
+    return this.service.findByOwner(userId, query);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'تفاصيل كرفان' })
   findOne(@Param('id') id: string) {
@@ -41,5 +49,25 @@ export class InventoryController {
   @ApiOperation({ summary: 'تحديث كرفان' })
   update(@Param('id') id: string, @CurrentUser('sub') userId: string, @Body() data: any) {
     return this.service.update(id, userId, data);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'حذف كرفان (إلغاء التنشيط)' })
+  remove(@Param('id') id: string, @CurrentUser('sub') userId: string) {
+    return this.service.softDelete(id, userId);
+  }
+
+  @Post(':id/reviews')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'إضافة تقييم' })
+  addReview(
+    @Param('id') caravanId: string,
+    @CurrentUser('sub') userId: string,
+    @Body() data: { rating: number; comment?: string },
+  ) {
+    return this.service.addReview(caravanId, userId, data);
   }
 }

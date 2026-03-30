@@ -4,15 +4,16 @@ import { useState } from 'react';
 import TopBar from '../components/TopBar';
 import {
   CalendarCheck, Truck, TrendingUp, Users, ArrowUp, ArrowDown,
-  Eye, Clock, AlertTriangle, CheckCircle, ChevronLeft
+  Eye, Clock, AlertTriangle, CheckCircle, ChevronLeft, Loader2
 } from 'lucide-react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import Link from 'next/link';
+import { useAdminOverview } from '../hooks/useAdmin';
 
-// KPI Data
+// KPI Data (fallback)
 const kpis = [
   { title: 'إجمالي الحجوزات', value: '247', change: '+12%', up: true, icon: CalendarCheck, color: 'olive', period: 'هذا الشهر' },
   { title: 'الكرفانات النشطة', value: '48', change: '+3', up: true, icon: Truck, color: 'copper', period: 'من أصل 52' },
@@ -69,15 +70,32 @@ const quickActions = [
 
 export default function DashboardPage() {
   const [chartPeriod, setChartPeriod] = useState<'weekly' | 'monthly'>('monthly');
+  const { data: overview, isLoading: overviewLoading } = useAdminOverview();
+
+  // Merge API data over mock fallbacks when available
+  const displayKpis = overview?.kpis
+    ? overview.kpis.map((apiKpi: any, i: number) => ({ ...kpis[i], ...apiKpi }))
+    : kpis;
+  const displayRevenueData = overview?.revenueData ?? revenueData;
+  const displayStatusData = overview?.statusData ?? statusData;
+  const displayWeeklyData = overview?.weeklyData ?? weeklyData;
+  const displayRecentBookings = overview?.recentBookings ?? recentBookings;
 
   return (
     <div className="min-h-screen">
       <TopBar title="لوحة التحكم" />
 
       <div className="p-6 space-y-6">
+        {overviewLoading && (
+          <div className="flex items-center gap-2 text-sm text-charcoal-light">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            جاري تحميل البيانات...
+          </div>
+        )}
+
         {/* KPI Cards */}
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {kpis.map((kpi) => {
+          {displayKpis.map((kpi: any) => {
             const Icon = kpi.icon;
             return (
               <div key={kpi.title} className="bg-white rounded-2xl p-5 border border-cream-dark hover:shadow-lg hover:shadow-charcoal/5 transition-all group">
@@ -136,7 +154,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={revenueData}>
+              <AreaChart data={displayRevenueData}>
                 <defs>
                   <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#4A5D3A" stopOpacity={0.3} />
@@ -165,7 +183,7 @@ export default function DashboardPage() {
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
-                  data={statusData}
+                  data={displayStatusData}
                   cx="50%"
                   cy="50%"
                   innerRadius={55}
@@ -173,7 +191,7 @@ export default function DashboardPage() {
                   paddingAngle={3}
                   dataKey="value"
                 >
-                  {statusData.map((entry, index) => (
+                  {displayStatusData.map((entry: any, index: number) => (
                     <Cell key={index} fill={entry.color} />
                   ))}
                 </Pie>
@@ -181,7 +199,7 @@ export default function DashboardPage() {
               </PieChart>
             </ResponsiveContainer>
             <div className="grid grid-cols-2 gap-2 mt-2">
-              {statusData.map((item) => (
+              {displayStatusData.map((item: any) => (
                 <div key={item.name} className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
                   <span className="text-xs text-charcoal-light">{item.name} ({item.value})</span>
@@ -198,7 +216,7 @@ export default function DashboardPage() {
             <h3 className="font-bold text-charcoal mb-1">حجوزات الأسبوع</h3>
             <p className="text-xs text-charcoal-light mb-4">عدد الحجوزات اليومية</p>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={weeklyData}>
+              <BarChart data={displayWeeklyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F0E8DA" />
                 <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#4A4A4A' }} />
                 <YAxis tick={{ fontSize: 11, fill: '#4A4A4A' }} />
@@ -236,7 +254,7 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-cream-dark">
-                  {recentBookings.map((b) => (
+                  {displayRecentBookings.map((b: any) => (
                     <tr key={b.id} className="hover:bg-cream/30 transition-colors cursor-pointer">
                       <td className="px-5 py-3 text-sm font-mono font-semibold text-olive">{b.id}</td>
                       <td className="px-5 py-3 text-sm text-charcoal">{b.customer}</td>

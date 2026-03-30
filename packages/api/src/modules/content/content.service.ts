@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { CacheService } from '../../common/cache/cache.service';
 
 @Injectable()
 export class ContentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cache: CacheService,
+  ) {}
 
   async getLocations(query: { type?: string; region?: string }) {
+    const cacheKey = `content:locations:${JSON.stringify(query)}`;
+    const cached = await this.cache.get(cacheKey);
+    if (cached) return cached;
+
     const where: any = { isActive: true };
     if (query.type) where.type = query.type;
     if (query.region) where.region = query.region;
@@ -15,7 +23,9 @@ export class ContentService {
       orderBy: { nameAr: 'asc' },
     });
 
-    return { success: true, data: locations };
+    const result = { success: true, data: locations };
+    await this.cache.set(cacheKey, result, 600);
+    return result;
   }
 
   async getRoutes(query: { difficulty?: string }) {
@@ -53,6 +63,10 @@ export class ContentService {
   }
 
   async getMapData(query: { region?: string; type?: string }) {
+    const cacheKey = `content:map:${JSON.stringify(query)}`;
+    const cached = await this.cache.get(cacheKey);
+    if (cached) return cached;
+
     const [locations, caravans, routes, campsites] = await Promise.all([
       this.prisma.location.findMany({
         where: {
@@ -101,9 +115,11 @@ export class ContentService {
       }),
     ]);
 
-    return {
+    const result = {
       success: true,
       data: { locations, caravans, routes, campsites },
     };
+    await this.cache.set(cacheKey, result, 600);
+    return result;
   }
 }

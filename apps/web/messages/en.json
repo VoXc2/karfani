@@ -248,5 +248,76 @@
     "code": "404",
     "description": "It seems you've lost your way! The page you're looking for doesn't exist or has been moved.",
     "backHome": "Back to Home"
+  },
+  "owner": {
+    "dashboard": "Dashboard",
+    "myCaravans": "My Caravans",
+    "addCaravan": "Add Caravan",
+    "bookings": "Bookings",
+    "earnings": "Earnings",
+    "calendar": "Calendar",
+    "totalRevenue": "Total Revenue",
+    "activeBookings": "Active Bookings",
+    "totalCaravans": "Total Caravans",
+    "monthlyEarnings": "Monthly Earnings",
+    "pendingBookings": "Pending Bookings",
+    "acceptBooking": "Accept Booking",
+    "rejectBooking": "Reject Booking",
+    "caravanStatus": "Caravan Status",
+    "editCaravan": "Edit Caravan",
+    "blockDates": "Block Dates",
+    "requestPayout": "Request Payout"
+  },
+  "faq": {
+    "title": "FAQ",
+    "subtitle": "Answers to your questions",
+    "booking": "Booking",
+    "payment": "Payment",
+    "cancellation": "Cancellation",
+    "owners": "Caravan Owners",
+    "general": "General",
+    "notFound": "We couldn't find what you're looking for"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "writeReview": "Write a Review",
+    "rating": "Rating",
+    "comment": "Your Comment",
+    "submit": "Submit Review",
+    "thankYou": "Thank you for your review!",
+    "noReviews": "No reviews yet"
+  },
+  "settings": {
+    "title": "Settings",
+    "notifications": "Notifications",
+    "language": "Language",
+    "emailNotifications": "Email Notifications",
+    "smsNotifications": "SMS Notifications",
+    "pushNotifications": "Push Notifications",
+    "deleteAccount": "Delete Account",
+    "deleteWarning": "This action cannot be undone",
+    "saved": "Settings saved"
+  },
+  "favorites": {
+    "title": "Favorites",
+    "empty": "You haven't added any caravans to favorites yet",
+    "browseCaravans": "Browse Caravans",
+    "remove": "Remove from Favorites"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidPhone": "Invalid phone number",
+    "invalidEmail": "Invalid email address",
+    "minLength": "Minimum {min} characters",
+    "maxLength": "Maximum {max} characters",
+    "invalidDate": "Invalid date",
+    "pastDate": "Cannot select a past date"
+  },
+  "notifications": {
+    "bookingConfirmed": "Your booking has been confirmed",
+    "bookingCancelled": "Booking has been cancelled",
+    "paymentReceived": "Payment received",
+    "reviewPosted": "Your review has been posted",
+    "caravanApproved": "Caravan has been approved"
   }
 }

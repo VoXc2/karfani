@@ -4,8 +4,9 @@ import { useState } from 'react';
 import TopBar from '../../components/TopBar';
 import {
   Search, SlidersHorizontal, Download, Eye, MoreHorizontal,
-  ChevronLeft, ChevronRight, Calendar, CheckCircle, Clock, XCircle, Truck
+  ChevronLeft, ChevronRight, Calendar, CheckCircle, Clock, XCircle, Truck, Loader2
 } from 'lucide-react';
+import { useAdminBookings } from '../../hooks/useAdmin';
 
 type BookingStatus = 'all' | 'confirmed' | 'pending' | 'active' | 'completed' | 'cancelled';
 
@@ -29,31 +30,47 @@ const bookings = [
   { id: 'KRF-2840', customer: 'هند السبيعي', phone: '0566778899', caravan: 'فان مغامرات', caravanId: 'C-012', start: '2026-02-20', end: '2026-02-23', status: 'completed', amount: 2100, paid: true },
 ];
 
-const statusTabs: { key: BookingStatus; label: string; count: number }[] = [
-  { key: 'all', label: 'الكل', count: bookings.length },
-  { key: 'confirmed', label: 'مؤكدة', count: bookings.filter(b => b.status === 'confirmed').length },
-  { key: 'pending', label: 'بانتظار الدفع', count: bookings.filter(b => b.status === 'pending').length },
-  { key: 'active', label: 'نشطة', count: bookings.filter(b => b.status === 'active').length },
-  { key: 'completed', label: 'مكتملة', count: bookings.filter(b => b.status === 'completed').length },
-  { key: 'cancelled', label: 'ملغاة', count: bookings.filter(b => b.status === 'cancelled').length },
-];
+function buildStatusTabs(data: typeof bookings): { key: BookingStatus; label: string; count: number }[] {
+  return [
+    { key: 'all', label: 'الكل', count: data.length },
+    { key: 'confirmed', label: 'مؤكدة', count: data.filter(b => b.status === 'confirmed').length },
+    { key: 'pending', label: 'بانتظار الدفع', count: data.filter(b => b.status === 'pending').length },
+    { key: 'active', label: 'نشطة', count: data.filter(b => b.status === 'active').length },
+    { key: 'completed', label: 'مكتملة', count: data.filter(b => b.status === 'completed').length },
+    { key: 'cancelled', label: 'ملغاة', count: data.filter(b => b.status === 'cancelled').length },
+  ];
+}
 
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState<BookingStatus>('all');
   const [search, setSearch] = useState('');
   const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const { data: apiBookings, isLoading } = useAdminBookings(page);
 
-  const filtered = bookings.filter((b) => {
+  // Use API data when available, fall back to mock
+  const allBookings: typeof bookings = apiBookings?.items ?? bookings;
+  const totalCount = apiBookings?.total ?? bookings.length;
+
+  const filtered = allBookings.filter((b: any) => {
     if (activeTab !== 'all' && b.status !== activeTab) return false;
     if (search && !b.id.includes(search) && !b.customer.includes(search) && !b.caravan.includes(search)) return false;
     return true;
   });
+
+  const statusTabs = buildStatusTabs(allBookings);
 
   return (
     <div className="min-h-screen">
       <TopBar title="إدارة الحجوزات" />
 
       <div className="p-6 space-y-6">
+        {isLoading && (
+          <div className="flex items-center gap-2 text-sm text-charcoal-light">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            جاري تحميل الحجوزات...
+          </div>
+        )}
         {/* Summary Cards */}
         <div className="grid sm:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 border border-cream-dark">
@@ -133,7 +150,7 @@ export default function BookingsPage() {
               </thead>
               <tbody className="divide-y divide-cream-dark">
                 {filtered.map((b) => {
-                  const status = statusConfig[b.status] || statusConfig.confirmed;
+                  const status = (statusConfig[b.status] ?? statusConfig.confirmed)!;
                   const StatusIcon = status.icon;
                   return (
                     <tr key={b.id} className="hover:bg-cream/30 transition-colors group">
@@ -189,7 +206,7 @@ export default function BookingsPage() {
 
           {/* Pagination */}
           <div className="px-5 py-3 border-t border-cream-dark flex items-center justify-between">
-            <p className="text-xs text-charcoal-light">عرض {filtered.length} من {bookings.length} حجز</p>
+            <p className="text-xs text-charcoal-light">عرض {filtered.length} من {totalCount} حجز</p>
             <div className="flex items-center gap-1">
               <button className="w-8 h-8 rounded-lg border border-cream-dark flex items-center justify-center hover:bg-cream transition-colors">
                 <ChevronRight className="w-4 h-4" />
