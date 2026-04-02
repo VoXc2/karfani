@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, Arial, sans-serif;
+  direction: rtl;
+  text-align: right;
+  color: #2D2D2D;
+  line-height: 1.8;
+  font-size: 11pt;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px 40px;
+}
+
+h1 {
+  color: #4A5D3A;
+  font-size: 24pt;
+  font-weight: 700;
+  border-bottom: 3px solid #4A5D3A;
+  padding-bottom: 8px;
+  margin-top: 30px;
+}
+
+h2 {
+  color: #4A5D3A;
+  font-size: 16pt;
+  font-weight: 600;
+  margin-top: 25px;
+  border-bottom: 1px solid #D4A574;
+  padding-bottom: 5px;
+}
+
+h3 {
+  color: #C67B3C;
+  font-size: 13pt;
+  font-weight: 600;
+  margin-top: 18px;
+}
+
+h4 {
+  color: #2D2D2D;
+  font-size: 11pt;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 10pt;
+}
+
+th {
+  background-color: #4A5D3A;
+  color: white;
+  padding: 8px 12px;
+  text-align: right;
+  font-weight: 600;
+}
+
+td {
+  padding: 6px 12px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+tr:nth-child(even) {
+  background-color: #FAF6F0;
+}
+
+tr:hover {
+  background-color: #f0ebe3;
+}
+
+code {
+  background-color: #FAF6F0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9pt;
+  direction: ltr;
+  text-align: left;
+}
+
+pre {
+  background-color: #2D2D2D;
+  color: #FAF6F0;
+  padding: 16px;
+  border-radius: 8px;
+  direction: ltr;
+  text-align: left;
+  font-size: 9pt;
+  overflow-x: auto;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  color: #FAF6F0;
+}
+
+blockquote {
+  border-right: 4px solid #C67B3C;
+  border-left: none;
+  padding-right: 16px;
+  margin-right: 0;
+  color: #555;
+  background-color: #FAF6F0;
+  padding: 10px 16px;
+  border-radius: 0 8px 8px 0;
+}
+
+strong {
+  color: #4A5D3A;
+}
+
+hr {
+  border: none;
+  border-top: 2px solid #D4A574;
+  margin: 25px 0;
+}
+
+a {
+  color: #C67B3C;
+  text-decoration: none;
+}
+
+ul, ol {
+  padding-right: 20px;
+  padding-left: 0;
+}
+
+li {
+  margin-bottom: 4px;
+}
+
+@page {
+  size: A4;
+  margin: 20mm 15mm;
+}
+
+@media print {
+  body {
+    font-size: 10pt;
+  }
+  h1 {
+    page-break-before: always;
+  }
+  h1:first-of-type {
+    page-break-before: avoid;
+  }
+  table {
+    page-break-inside: avoid;
+  }
+}
