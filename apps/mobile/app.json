@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "كرفاني",
+    "slug": "karfani",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "karfani",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#4A5D3A",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.karfani.app"
+    },
+    "android": {
+      "package": "com.karfani.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#4A5D3A"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        { "cameraPermission": "نحتاج إذن الكاميرا لتصوير الكرفان" }
+      ],
+      [
+        "expo-location",
+        { "locationAlwaysAndWhenInUsePermission": "نحتاج موقعك لتحديد أقرب كرفان" }
+      ],
+      [
+        "expo-notifications",
+        { "sounds": [] }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

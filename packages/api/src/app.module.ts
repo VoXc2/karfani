@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
@@ -20,6 +21,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { HealthModule } from './modules/health/health.module';
+import { PromoModule } from './modules/promo/promo.module';
 import { EventsModule } from './gateways/events.module';
 import { QueueModule } from './queues/queue.module';
 import { CacheModule } from './common/cache/cache.module';
@@ -50,6 +52,11 @@ import { CacheModule } from './common/cache/cache.module';
     NotificationsModule,
     UploadModule,
     HealthModule,
+    PromoModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestLoggerMiddleware).forRoutes('*');
+  }
+}

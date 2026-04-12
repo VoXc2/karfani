@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-build-test:
+    name: Lint, Build & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: karfani
+          POSTGRES_PASSWORD: karfani_test
+          POSTGRES_DB: karfani_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://karfani:karfani_test@localhost:5432/karfani_test
+      REDIS_URL: redis://localhost:6379
+      JWT_SECRET: ci-test-secret-key
+      NODE_ENV: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter @karfani/database exec prisma generate
+
+      - name: Run database migrations
+        run: pnpm --filter @karfani/database exec prisma db push --skip-generate
+
+      - name: Build shared package
+        run: pnpm --filter @karfani/shared build
+
+      - name: Build database package
+        run: pnpm --filter @karfani/database build
+
+      - name: Type check API
+        run: pnpm --filter @karfani/api exec tsc --noEmit
+
+      - name: Build API
+        run: pnpm --filter @karfani/api build
+
+      - name: Build Web
+        run: pnpm --filter web build
+
+      - name: Build Admin
+        run: pnpm --filter admin build
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+        continue-on-error: true

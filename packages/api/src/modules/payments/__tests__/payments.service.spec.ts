@@ -8,11 +8,21 @@ describe('PaymentsService', () => {
   let service: PaymentsService;
   let prisma: MockPrismaService;
   let events: MockEventEmitter;
+  let mockConfig: any;
 
   beforeEach(() => {
     prisma = createMockPrismaService();
     events = createMockEventEmitter();
-    service = new PaymentsService(prisma as any, events as any);
+    mockConfig = {
+      get: vi.fn((key: string) => {
+        if (key === 'MOYASAR_API_KEY') return '';
+        if (key === 'MOYASAR_WEBHOOK_SECRET') return '';
+        if (key === 'NODE_ENV') return 'test';
+        if (key === 'WEB_URL') return 'http://localhost:3000';
+        return null;
+      }),
+    };
+    service = new PaymentsService(prisma as any, events as any, mockConfig);
   });
 
   describe('initiatePayment', () => {
